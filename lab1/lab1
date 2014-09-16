@@ -1,0 +1,7 @@
+design Scanner that	stores Tokens in LL
+			has getnext function
+			has total tokens variable, return func
+design Token that 	has a print function
+			has constructor: (int lineNumber, string Val, enum type)
+
+
