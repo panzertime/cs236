@@ -9,76 +9,111 @@
 *
 */
 
+#ifndef SCANNER_H
+#define SCANNER_H
+
 #include "Token.h"
-#include <list>
+#include <vector>
 #include <string>
-#include <ifstream>
+#include <fstream>
 
 using namespace std;
 
 class Scanner {
 
 	unsigned Total;
-	list<Token> Stowage;
+	vector<Token> Stowage;
+	ifstream & src;
 	
-	void skipSkippable(ifstream & src){
+	void skipSkippable(char init){
 		//skip whitespace
 		//skip comments
 		//count linenumbers
-		char c = src.get();
-		while(c.isspace()){
-			if(c == '/n'){
+cout << "skipping" << endl;
+		while(isspace(init)){
+cout << "w.s.!" << endl;
+			if(init == '\n'){
 				Total++;
 			}
-			c = src.get();
-			//keeps going until c is not w.s.
+			init = src.get();
+			//keeps going until character is not w.s.
 		}
-		if(c == '#'){
-			Total++;
+		if(init == '#'){
+cout << "comment" << endl;
 			//continue to end of line
-		}
-	}
-
-	string getNext(ifstream & src){
-		// read some chars, return string
-		
-		char c;
-		while(c = src.get()){
-			while(c.isspace()){
-				if(c == '/n'){
-					Total++;
-				}
-				c = src.get();
-	//continually until no more w.s.
+			while(init != '\n'){
+				init = src.get();
 			}
-			if(c == '#'){
-				//Total++;
-	//Check here if total count is bad
-	//test by adding comments
-				while(c != '/n'){
-				c = src.get();
+			skipSkippable(init);
+			//to get all comments in a row
+			//as well as the newline
+			//test by doing multiline comments
+		}
+	}		
 
-		
+	void getNext(){
+		// read some chars, return Token
+	
+		char c;
+		// weirdly, .get() keeps going past EOF
+		while((c = src.get()) && src.good()){
+cout << "before skip: " << c << endl;
+			skipSkippable(c);
+cout << "after skip: " << c << endl;
+			switch(c){
+				case ',' :
+cout << c << endl;
+					Stowage.push_back(Token(",",Total,COMMA));
+					break;
+				case '.' :
+					//period
+					break;
+				case '?' :
+					//
+					break;
+				case '(' :
+					
+					break;
+				case ')' :
+					
+					break;
+				case ':' :
+					//also find :-
+					break;
+				case '\'' :
+					//scan whole string
+					break;
+				default :
+					//scanID
+					break;
+			}
+		}		
 	}
 
 public:
-	Scanner(){
-		Total = 0;
+	Scanner(ifstream & in):src(in){
+		Total = 1;
+		//because the first line is called "line one"
+		//
+		//	duh
 	}
 	
 	virtual ~Scanner(){
 	}
 
-	scan(ifstream & in){
+	void scan(){
 		//repeatedly do:
 		//	getNext()
 		//	tokenize();
 		//	new token, add to Stowage
+		getNext();
 	}
 
-	list<Token> getTokens(){
+	vector<Token> getTokens(){
 		return Stowage;
 	}
 
 };
 	
+
+#endif

@@ -5,6 +5,9 @@
 *	Print function outputs to a stream
 */
 
+#ifndef TOKEN_H
+#define TOKEN_H
+
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -53,4 +56,6 @@ public:
 	}
 
 };
+
+#endif
 

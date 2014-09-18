@@ -6,13 +6,23 @@
 */
 
 #include "Token.h"
+#include "Scanner.h"
+#include <vector>
 #include <fstream>
 
 int main(int argc, const char** argv){
-
-	Token t = Token("Dicks in Pussies",3,ID);
+	
+	ifstream in;
+	in.open(argv[1]);
 	ofstream out;
-	out.open(argv[1]);
-	t.print(out);
+	out.open(argv[2]);
+
+	Scanner s(in);
+	s.scan();
+	vector<Token> v = s.getTokens();
+	for(auto t : v){
+		t.print(out);
+	}
+	in.close();
 	out.close();
 }
