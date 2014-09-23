@@ -45,16 +45,26 @@ class Scanner {
 			//to get all comments in a row
 			//as well as the newline
 			//test by doing multiline comments
+			//
+			//this actually raised a huge issue.
+			//getNext knew where the caret was,
+			//but not the last char read.  
+			//introducing a return almost fixed
+			//it, but i forgot to carry thru
+			//recursion
 		}
 	return init;
 	}		
 
 	void getNext(){
-		// read some chars, return Token
+		// read some chars, put some Tokens
 	
 		char c;
 		// weirdly, .get() keeps going past EOF
+		// thus it is wonderful that I happened
+		// upon ios.good()
 		while((c = src.get()) && src.good()){
+			string words;
 			c = skipSkippable(c);
 			switch(c){
 				case ',' :
@@ -73,10 +83,21 @@ class Scanner {
 					Stowage.push_back(Token(")",Total,RIGHT_PAREN));
 					break;
 				case ':' :
-					//also find :-
+					c = src.get();
+					if (isspace(c)){
+						Stowage.push_back(Token(":",Total,COLON));
+					}
+					else {
+						Stowage.push_back(Token(":-",Total,COLON_DASH));
+					}
 					break;
 				case '\'' :
-					//scan whole string
+					c = src.get();
+					do {
+						words += c;
+						c = src.get();
+					} while (c != '\'');
+					Stowage.push_back(Token(words,Total,STRING));
 					break;
 				default :
 					//scanID
