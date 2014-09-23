@@ -118,10 +118,6 @@ public:
 	}
 
 	void scan(){
-		//repeatedly do:
-		//	getNext()
-		//	tokenize();
-		//	new token, add to Stowage
 		getNext();
 	}
 
