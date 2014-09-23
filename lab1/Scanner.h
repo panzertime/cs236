@@ -25,13 +25,11 @@ class Scanner {
 	vector<Token> Stowage;
 	ifstream & src;
 	
-	void skipSkippable(char init){
+	char skipSkippable(char init){
 		//skip whitespace
 		//skip comments
 		//count linenumbers
-cout << "skipping" << endl;
 		while(isspace(init)){
-cout << "w.s.!" << endl;
 			if(init == '\n'){
 				Total++;
 			}
@@ -39,16 +37,16 @@ cout << "w.s.!" << endl;
 			//keeps going until character is not w.s.
 		}
 		if(init == '#'){
-cout << "comment" << endl;
 			//continue to end of line
 			while(init != '\n'){
-				init = src.get();
+				init = src.get();								
 			}
-			skipSkippable(init);
+			init = skipSkippable(init);
 			//to get all comments in a row
 			//as well as the newline
 			//test by doing multiline comments
 		}
+	return init;
 	}		
 
 	void getNext(){
@@ -57,25 +55,22 @@ cout << "comment" << endl;
 		char c;
 		// weirdly, .get() keeps going past EOF
 		while((c = src.get()) && src.good()){
-cout << "before skip: " << c << endl;
-			skipSkippable(c);
-cout << "after skip: " << c << endl;
+			c = skipSkippable(c);
 			switch(c){
 				case ',' :
-cout << c << endl;
 					Stowage.push_back(Token(",",Total,COMMA));
 					break;
 				case '.' :
-					//period
+					Stowage.push_back(Token(".",Total,PERIOD));
 					break;
 				case '?' :
-					//
+					Stowage.push_back(Token("?",Total,Q_MARK));
 					break;
 				case '(' :
-					
+					Stowage.push_back(Token("(",Total,LEFT_PAREN));
 					break;
 				case ')' :
-					
+					Stowage.push_back(Token(")",Total,RIGHT_PAREN));
 					break;
 				case ':' :
 					//also find :-
