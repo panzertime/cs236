@@ -18,11 +18,15 @@ int main(int argc, const char** argv){
 	out.open(argv[2]);
 
 	Scanner s(in);
-	s.scan();
+	unsigned err = s.scan();
 	vector<Token> v = s.getTokens();
 	for(auto t : v){
 		t.print(out);
 	}
+	if (err)
+		out << "Input Error on line " << err << endl;
 	in.close();
+	if (!err)
+		out << "Total Tokens = " << v.size();
 	out.close();
 }

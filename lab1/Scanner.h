@@ -20,7 +20,8 @@
 using namespace std;
 
 class Scanner {
-
+	
+	bool error;
 	unsigned Total;
 	vector<Token> Stowage;
 	ifstream & src;
@@ -29,8 +30,8 @@ class Scanner {
 		//skip whitespace
 		//skip comments
 		//count linenumbers
-		while(isspace(init)){
-			if(init == '\n'){
+		while(isspace(init) && src.good()){
+			if(init == '\n' || init == '\f' || init == '\r'){
 				Total++;
 			}
 			init = src.get();
@@ -55,60 +56,126 @@ class Scanner {
 		}
 	return init;
 	}		
+	
+	char scanID(char init){
+		string words;
+		while(isalnum(init) ){
+			words += init;
+			init = src.get();
+			//possible problem source...
+			//the order of the .get() can be an issue
+
+		}
+//cout << "adding ID at: " << Total << endl;
+		//we now have an ID!
+		if(words == "Schemes"){
+			Stowage.push_back(Token(words,Total,SCHEMES));
+			return init;
+		}
+		else if(words == "Facts"){
+			Stowage.push_back(Token(words,Total,FACTS));
+			return init;
+		}
+		else if(words == "Rules"){
+			Stowage.push_back(Token(words,Total,RULES));
+			return init;
+		}
+		else if(words == "Queries"){
+			Stowage.push_back(Token(words,Total,QUERIES));
+			return init;
+		}
+		else if(words.size() > 0 && isalpha(words[0])){
+			Stowage.push_back(Token(words,Total,ID));
+			return init;
+		}
+
+		error = 1;
+		return init;
+	}	
+	
+	char scanString(char init){
+		string words;
+		while (init != '\''){
+			words += init;
+			init = src.get();
+			if(init == '\n' || init == EOF){
+				error = 1;
+				return init;
+			}
+		}// while (init != '\'');
+		Stowage.push_back(Token(words,Total,STRING));
+		// no extra src.get() because that do-while does it for us
+		// otherwise we end up doing two strings :P
+		return src.get();
+	}
 
 	void getNext(){
 		// read some chars, put some Tokens
 	
-		char c;
+		char c = src.get();
 		// weirdly, .get() keeps going past EOF
 		// thus it is wonderful that I happened
 		// upon ios.good()
-		while((c = src.get()) && src.good()){
+		while(src.good()) {
 			string words;
+//cout << "Line: " << Total << endl;
+//cout << "char: " << c << endl;
 			c = skipSkippable(c);
+//cout << "skipped to: " << c << endl;
 			switch(c){
 				case ',' :
 					Stowage.push_back(Token(",",Total,COMMA));
+					c = src.get();
 					break;
 				case '.' :
 					Stowage.push_back(Token(".",Total,PERIOD));
+					c = src.get();
 					break;
 				case '?' :
 					Stowage.push_back(Token("?",Total,Q_MARK));
+					c = src.get();
 					break;
 				case '(' :
 					Stowage.push_back(Token("(",Total,LEFT_PAREN));
+					c = src.get();
 					break;
 				case ')' :
 					Stowage.push_back(Token(")",Total,RIGHT_PAREN));
+					c = src.get();
 					break;
 				case ':' :
 					c = src.get();
-					if (isspace(c)){
+					if (c != '-'){
 						Stowage.push_back(Token(":",Total,COLON));
 					}
-					else {
+					else if (c == '-'){
 						Stowage.push_back(Token(":-",Total,COLON_DASH));
+						c = src.get();
 					}
+					//c = src.get(); // have to do twice so we don't iterate again with -
 					break;
 				case '\'' :
 					c = src.get();
-					do {
-						words += c;
-						c = src.get();
-					} while (c != '\'');
-					Stowage.push_back(Token(words,Total,STRING));
+					c = scanString(c);
 					break;
+				case EOF :
+					return;
+				
 				default :
-					//scanID
+//cout << "scanning: " << c << " line " << Total << endl;
+					c = scanID(c);
 					break;
 			}
-		}		
+			if(error){
+				return;
+			}
+		} // while (src.good());		
 	}
 
 public:
 	Scanner(ifstream & in):src(in){
 		Total = 1;
+		error = 0;
 		//because the first line is called "line one"
 		//
 		//	duh
@@ -117,8 +184,12 @@ public:
 	virtual ~Scanner(){
 	}
 
-	void scan(){
+	unsigned scan(){
 		getNext();
+		if(error){
+			return Total;}
+		else
+			return 0;
 	}
 
 	vector<Token> getTokens(){
