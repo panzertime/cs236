@@ -34,7 +34,7 @@ public:
 		// it in main, I guess)
 	}
 
-	void parse(){
+	DatalogProgram parse();
 		match(SCHEMES);
 		match(COLON);
 		parseSchemeList();
@@ -47,6 +47,7 @@ public:
 		match(QUERIES);
 		match(COLON);
 		parseQueryList();
+	return DP;
 	}
 
 private:  	// no idea if this works, we'll see i guess
@@ -61,6 +62,9 @@ private:  	// no idea if this works, we'll see i guess
 		parsePredicate();
 		DP.addScheme(currPred);
 		// erase currPred ?
+		// in fact... this is a problem.  we need to make
+		// a *new* predicate every time.  maybe return 
+		// a predicate from parsePredicate() ?
 	}
 
 	void parsePredicate(){
@@ -95,6 +99,34 @@ private:  	// no idea if this works, we'll see i guess
 		}
 		currPred.addParam(p);
 	}
+
+	void parseFactList(){
+		if(tokens[at].tokenType != RULES){
+			parseFact();
+			parseFactList();
+		}
+	}
+
+	void parseFact();
+		parsePredicate();
+		DP.addFact(currPred);
+		// same issue as parseScheme()
+	}
+
+	void parseRuleList();
+		if(tokens[at].tokenType != QUERIES){
+			parseRule();
+			parseRuleList();
+		}
+	}
+
+	void parseRule() {
+		// let's fix the predicate issue first, same issue here
+	}
+
+
+
+		
 
 
 

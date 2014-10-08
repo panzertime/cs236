@@ -18,3 +18,12 @@ obviously this is too much big-O, so make lotsa functions
 
 really what's going on is you're making a recursive structure to call
 	match(tokentype) several times in the right sequence
+
+
+well building the parse engine wasn't too difficult.  just a lot of
+repetition.  challenge: making sure I modify the *right* predicate
+each time.  
+
+CHECK THE PUNCTUATION IN THE GRAMMAR - I MISSED A COUPLA THINGS
+	(this would have been self-evident on the first test tho)
+
