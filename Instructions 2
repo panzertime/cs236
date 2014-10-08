@@ -1,0 +1,20 @@
+toString is key:
+	parse into DatalogProgram
+	DP.toString();
+		then toString all of the things *in* DP appropriately
+
+recursive descent:
+
+stepping thru vector of tokens (whew):
+
+	parse[thing](){
+		match(terminal)
+		match(terminal)
+		parse[other var]()
+			//nest more parses for that translation
+	}
+
+obviously this is too much big-O, so make lotsa functions
+
+really what's going on is you're making a recursive structure to call
+	match(tokentype) several times in the right sequence
