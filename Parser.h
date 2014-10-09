@@ -1,10 +1,11 @@
 #ifndef PARSER_OBJECT_H
 #define PARSER_OBJECT_H
 
-#include 'Token.h'
-#include 'Kind.h'
-#include 'DatalogProgram.h'
-#include 'Predicate'
+#include "Token.h"
+#include "Kind.h"
+#include "DatalogProgram.h"
+#include "Predicate.h"
+#include "Rule.h"
 
 using namespace std;
 
@@ -15,6 +16,9 @@ private:
 	int at;
 	DatalogProgram DP;
 	Predicate currPred;
+	Predicate noP;
+	Rule currentRule;
+	Rule noR;
 
 public:
 	Parser(vector<Token> & scanned):tokens(scanned){
@@ -59,34 +63,36 @@ private:  	// no idea if this works, we'll see i guess
 	}
 
 	void parseScheme(){
-		Predicate p = parsePredicate();
-		DP.addScheme(p);
+		parsePredicate();
+		DP.addScheme(currPred);
+		currPred = noP;
 		// erase currPred ?
 		// in fact... this is a problem.  we need to make
 		// a *new* predicate every time.  maybe return 
 		// a predicate from parsePredicate() ?
 	}
 
-	Predicate parsePredicate(){
+	void parsePredicate(){
 		match(ID);
-		Predicate p(tokens[at - 1].Value);
+		currPred.label=tokens[at - 1].Value;
 		match(LEFT_PAREN);
 		parseParamList();
 		match(RIGHT_PAREN);
-		return p;
 	}
 
-	void parseParamList(Predicate & p){
+	void parseParamList(){
 		/* check for either just the param, or more lists
 		 * then */
 
-		parseParam(p);
-		if(tokens[at].tokenType == COMMA)
-			parseParamList(p);
+		parseParam();
+		if(tokens[at].tokenType == COMMA){
+			match(COMMA);
+			parseParamList();
+		}
 		//might need extra increment here, idk
 	}
 
-	void parseParam(Predicate & currPred){
+	void parseParam(){
 		//either string or ID
 		if (tokens[at].tokenType == ID){
 			match(ID);
@@ -96,7 +102,7 @@ private:  	// no idea if this works, we'll see i guess
 			match(STRING);
 			p.value = tokens[at-1].Value;
 		}
-		currPred.addParam(p);
+		currPred.addParam();
 	}
 
 	void parseFactList(){
@@ -114,7 +120,7 @@ private:  	// no idea if this works, we'll see i guess
 	}
 
 	void parseRuleList(){
-		if(tokens[at].tokenType != QUERIES){
+		if(tokens[at].tokenType != COMMA){
 			parseRule();
 			parseRuleList();
 		}
@@ -122,9 +128,48 @@ private:  	// no idea if this works, we'll see i guess
 
 	void parseRule() {
 		parsePredicate();
+		currRule.addHead(currPred);
+		currPred = noP;
 		match(COLON_DASH);
 		parsePredicateList();
+		DP.addRule(currRule);
+		currRule = noR;
+		
+		//
 		// wow, how do i know where / when to put these predicates!
+		// honestly why not just assume the first pred in any rule
+		// is before a :-, this is not complicated
+	}
+
+	void parsePredList(){
+		parsePredicate();
+		currRule.addTail(currPred);
+		currPred = noP;
+		if(tokens[at].tokenType == COMMA){
+			match(COMMA);
+			parsePredList();
+		}
+		else {
+			match(PERIOD);
+		}
+	}
+
+	void parseQueryList() {
+		parseQuery();
+		if(at > tokens.size()){
+			return;
+			//we should be done, right?
+		}
+		else{
+			parseQueryList();
+		}
+	}
+
+	void parseQuery() {
+		parsePredicate();
+		DP.addQuery(currPred);
+		currPred = noP;
+		match(Q_MARK);
 	}
 
 
