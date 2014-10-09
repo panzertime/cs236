@@ -34,7 +34,7 @@ public:
 		// it in main, I guess)
 	}
 
-	DatalogProgram parse();
+	DatalogProgram parse(){
 		match(SCHEMES);
 		match(COLON);
 		parseSchemeList();
@@ -59,42 +59,41 @@ private:  	// no idea if this works, we'll see i guess
 	}
 
 	void parseScheme(){
-		parsePredicate();
-		DP.addScheme(currPred);
+		Predicate p = parsePredicate();
+		DP.addScheme(p);
 		// erase currPred ?
 		// in fact... this is a problem.  we need to make
 		// a *new* predicate every time.  maybe return 
 		// a predicate from parsePredicate() ?
 	}
 
-	void parsePredicate(){
+	Predicate parsePredicate(){
 		match(ID);
-		currPred.label = tokens[at - 1].Value;
+		Predicate p(tokens[at - 1].Value);
 		match(LEFT_PAREN);
 		parseParamList();
 		match(RIGHT_PAREN);
+		return p;
 	}
 
-	void parseParamList(){
+	void parseParamList(Predicate & p){
 		/* check for either just the param, or more lists
 		 * then */
 
-		parseParam();
+		parseParam(p);
 		if(tokens[at].tokenType == COMMA)
-			parseParamList();
+			parseParamList(p);
 		//might need extra increment here, idk
 	}
 
-	void parseParam(){
+	void parseParam(Predicate & currPred){
 		//either string or ID
 		if (tokens[at].tokenType == ID){
 			match(ID);
-			Parameter p();
 			p.name = tokens[at-1].Value;
 		}
 		else {
 			match(STRING);
-			Parameter p();
 			p.value = tokens[at-1].Value;
 		}
 		currPred.addParam(p);
@@ -107,13 +106,14 @@ private:  	// no idea if this works, we'll see i guess
 		}
 	}
 
-	void parseFact();
-		parsePredicate();
-		DP.addFact(currPred);
+	void parseFact(){
+		Predicate p = parsePredicate();
+		match(PERIOD);
+		DP.addFact();
 		// same issue as parseScheme()
 	}
 
-	void parseRuleList();
+	void parseRuleList(){
 		if(tokens[at].tokenType != QUERIES){
 			parseRule();
 			parseRuleList();
@@ -121,7 +121,10 @@ private:  	// no idea if this works, we'll see i guess
 	}
 
 	void parseRule() {
-		// let's fix the predicate issue first, same issue here
+		parsePredicate();
+		match(COLON_DASH);
+		parsePredicateList();
+		// wow, how do i know where / when to put these predicates!
 	}
 
 
