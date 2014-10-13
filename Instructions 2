@@ -27,3 +27,11 @@ each time.
 CHECK THE PUNCTUATION IN THE GRAMMAR - I MISSED A COUPLA THINGS
 	(this would have been self-evident on the first test tho)
 
+
+at this point (before any review, really): 
+	make a predicate with a vector of params
+	make a param with a value and an ID bool
+		setName and setValue methods
+	make a rule with a head predicate and a vector of tail predicates
+
+	toStrings for each

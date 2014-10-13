@@ -6,6 +6,7 @@
 #include "DatalogProgram.h"
 #include "Predicate.h"
 #include "Rule.h"
+#include "Parameter.h"
 
 using namespace std;
 
@@ -13,11 +14,11 @@ class Parser {
 
 private:
 	vector<Token> tokens;
-	int at;
+	unsigned at;
 	DatalogProgram DP;
 	Predicate currPred;
 	Predicate noP;
-	Rule currentRule;
+	Rule currRule;
 	Rule noR;
 
 public:
@@ -32,7 +33,7 @@ public:
 		if(tokens[at].tokenType == k)
 			at++;
 		else
-			throw tokens[at]
+			throw tokens[at];
 		// makes sure it's the right kind of terminal,
 		// if not throws the offending token (handle
 		// it in main, I guess)
@@ -94,15 +95,16 @@ private:  	// no idea if this works, we'll see i guess
 
 	void parseParam(){
 		//either string or ID
+		Parameter p;
 		if (tokens[at].tokenType == ID){
 			match(ID);
-			p.name = tokens[at-1].Value;
+			p.addName(tokens[at-1].Value);
 		}
 		else {
 			match(STRING);
-			p.value = tokens[at-1].Value;
+			p.addValue(tokens[at-1].Value);
 		}
-		currPred.addParam();
+		currPred.addParam(p);
 	}
 
 	void parseFactList(){
@@ -113,14 +115,15 @@ private:  	// no idea if this works, we'll see i guess
 	}
 
 	void parseFact(){
-		Predicate p = parsePredicate();
+		parsePredicate();
 		match(PERIOD);
-		DP.addFact();
+		DP.addFact(currPred);
+		currPred = noP;
 		// same issue as parseScheme()
 	}
 
 	void parseRuleList(){
-		if(tokens[at].tokenType != COMMA){
+		if(tokens[at].tokenType != QUERIES){
 			parseRule();
 			parseRuleList();
 		}
@@ -139,15 +142,19 @@ private:  	// no idea if this works, we'll see i guess
 		// wow, how do i know where / when to put these predicates!
 		// honestly why not just assume the first pred in any rule
 		// is before a :-, this is not complicated
+
+		// match(PERIOD);
+		// because i match it in PredList.
 	}
 
-	void parsePredList(){
+	void parsePredicateList(){
 		parsePredicate();
 		currRule.addTail(currPred);
 		currPred = noP;
+//cout << "finna match: " << tokens[at].tokenType << endl;
 		if(tokens[at].tokenType == COMMA){
 			match(COMMA);
-			parsePredList();
+			parsePredicateList();
 		}
 		else {
 			match(PERIOD);
@@ -156,7 +163,7 @@ private:  	// no idea if this works, we'll see i guess
 
 	void parseQueryList() {
 		parseQuery();
-		if(at > tokens.size()){
+		if(at > ( tokens.size() - 1 )){
 			return;
 			//we should be done, right?
 		}

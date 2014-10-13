@@ -1,4 +1,5 @@
-
+#ifndef KIND
+#define KIND
 
 
 
@@ -18,3 +19,4 @@ enum Kind {
 		STRING
 	} ;
 
+#endif

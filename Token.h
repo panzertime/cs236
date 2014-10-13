@@ -17,15 +17,16 @@
 using namespace std;
 
 class Token {
-
+public:
 	string Value;
 	unsigned Line;
-	Kind tokenType;
+//	Kind tokenType;
 
 	map<int, string> kinds;
 
 
-public:
+//public:
+	Kind tokenType;
 
 	Token(string V, unsigned L, Kind K){
 		Value = V;

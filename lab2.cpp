@@ -7,6 +7,8 @@
 
 #include "Token.h"
 #include "Scanner.h"
+#include "DatalogProgram.h"
+#include "Parser.h"
 #include <vector>
 #include <fstream>
 
@@ -20,9 +22,13 @@ int main(int argc, const char** argv){
 	Scanner s(in);
 	s.scan();
 	vector<Token> v = s.getTokens();
+	Parser p(v);
 	try{
-		Parser p(v);
-		p.parse();
+		DatalogProgram DProg = p.parse();
+		DProg.createDomain();
+		out << "Success!" << endl;
+		out << DProg.toString();
+		
 	}
 	catch (Token e){
 		out << "Failure!" << endl;

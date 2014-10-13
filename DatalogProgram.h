@@ -3,8 +3,9 @@
 
 #include "Predicate.h"
 #include "Rule.h"
-#include <vector.h>
+#include <vector>
 #include <string>
+#include <set>
 
 using namespace std;
 
@@ -15,6 +16,7 @@ private:
 	vector<Predicate> Facts;
 	vector<Rule> Rules;
 	vector<Predicate> Queries;
+	set<string> Domain;
 
 
 public:
@@ -27,57 +29,84 @@ public:
 	virtual ~DatalogProgram(){
 	}
 
-	addScheme(Predicate p){
+	void addScheme(Predicate p){
 		Schemes.push_back(p);
 	}
 
-	addFact(Predicate p){
+	void addFact(Predicate p){
 		Facts.push_back(p);
 	}
 
-	addRule(Rule r){
+	void addRule(Rule r){
 		Rules.push_back(r);
 	}
 
-	addQuery(Predicate p){
+	void addQuery(Predicate p){
 		Queries.push_back(p);
 	}
+
+	void createDomain(){
+		for(auto p : Facts){
+			for(auto t : p.params){
+				if(!t.ID)
+					Domain.insert("'" + t.value + "'");
+			}
+		}
+		for(auto p : Queries){
+			for(auto t : p.params){
+				if(!t.ID)
+					Domain.insert("'" + t.value + "'");
+			}
+		}
+	//	Domain.sort();
+	}
+
 
 	string toString(){
 		string s;
 		s += "Schemes(";
-		s += Schemes.size();
+		s += to_string(Schemes.size());
 		s += "):\n";
 		for(auto p : Schemes){
 			s += "  ";
-			s += p.toString;
+			s += p.toString();
 			s += "\n";
 		}
 		s += "Facts(";
-		s += Facts.size();
+		s += to_string(Facts.size());
 		s += "):\n";
 		for(auto p : Facts){
 			s += "  ";
-			s += p.toString;
+			s += p.toString();
 			s += "\n";
 		}
 		s += "Rules(";
-		s += Rules.size();
+		s += to_string(Rules.size());
 		s += "):\n";
 		for(auto r : Rules){
 			s += "  ";
-			s += r.toString;
+			s += r.toString();
 			s += "\n";
 		}
 		s += "Queries(";
-		s += Queries.size();
+		s += to_string(Queries.size());
 		s += "):\n";
-		for(auto p : Queries);
+		for(auto p : Queries){
 			s += "  ";
-			s += p.toString;
+			s += p.toString();
+			s += "\n";
+		}
+		s += "Domain(";
+		s += to_string(Domain.size());
+		s += "):\n";
+		for(auto t : Domain){
+			s += "  ";
+			s += t;
 			s += "\n";
 		}
 
+		return s;
+	}
 };
 
 #endif
