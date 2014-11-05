@@ -45,19 +45,58 @@ public:
 		Queries.push_back(p);
 	}
 
-	void createDomain(){
+	void schemesDom(){
+		for(auto p : Schemes){
+			for(auto t : p.params){
+				if(!t.ID)
+					Domain.insert("'" + t.value + "'");
+			}
+		}
+
+	}
+
+	void factsDom(){
 		for(auto p : Facts){
 			for(auto t : p.params){
 				if(!t.ID)
 					Domain.insert("'" + t.value + "'");
 			}
 		}
+
+	}
+
+	void rulesDom(){
+		for(auto r: Rules){
+			for(auto t : r.head.params){
+				if(!t.ID)
+					Domain.insert("'" + t.value + "'");
+			}
+			for(auto p : r.tail){
+				for(auto t : p.params){
+					if(!t.ID)
+						Domain.insert("'" + t.value + "'");
+				}
+			}
+		}
+
+	}
+
+	void queriesDom(){
 		for(auto p : Queries){
 			for(auto t : p.params){
 				if(!t.ID)
 					Domain.insert("'" + t.value + "'");
 			}
 		}
+
+	}
+
+	void createDomain(){
+		schemesDom();
+		factsDom();
+		rulesDom();
+		queriesDom();
+
 	//	Domain.sort();
 	}
 

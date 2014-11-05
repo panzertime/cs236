@@ -9,12 +9,12 @@ using namespace std;
 
 class Rule {
 
-private:
+public:
 
 	Predicate head;
 	vector<Predicate> tail;
 
-public:
+//public:
 
 	Rule(){
 
