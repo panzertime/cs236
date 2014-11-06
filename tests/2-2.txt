@@ -1,0 +1,17 @@
+
+
+Schemes:
+  snap('Schemes String',N,A,P)
+  HasSameAddress(X,Y)
+
+Facts:
+  snap('12345','C. Brown','12 Apple','555-1234').
+  snap('33333','Snoopy','12 Apple','555-1234').
+
+Rules:
+  HasSameAddress(X,'Rulehead string') :- snap('Ruletail string',A,X,B,C),poop(A,B,C),pee(A,Q).
+
+Queries:
+  HasSameAddress('Snoopy',Who)?
+
+
