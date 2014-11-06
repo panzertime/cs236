@@ -19,14 +19,14 @@ public:
 	string Name;
 	Scheme scheme;
 
-	void add(tuple & t){
+	void add(Tuple & t){
 		tuples.insert(t);
 	}
 
 	Relation select(int pos, string & val){
 		Relation r;
 		for(tuple t : tuples){
-			if t[pos] == val
+			if (t[pos] == val)				
 				r.add(t);
 		}
 		return r;
@@ -35,7 +35,7 @@ public:
 	Relation select(int & pos1, int & pos2){
 		Relation r;
 		for(tuple t : tuples){
-			if t[pos1] == t[pos2]
+			if (t[pos1] == t[pos2])
 				r.add(t);
 		}
 		return r;

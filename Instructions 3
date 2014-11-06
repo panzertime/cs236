@@ -1,0 +1,52 @@
+building database:
+	first build DP.  then iterate thru DP's Schemes, add each
+	to DB via DB.addRelation() .  They become Relations.  Same
+	thing, really.  (You have to translate the Scheme Predicate
+	into an actual Scheme first.  Do this in the Scheme constructor
+	to save your brain).  
+	Similar for the Facts: Looks like we can just iterate thru
+	each Fact and translate it to a Tuple, then add it to the proper 
+	Relation.  Not sure how to do this.  Most likely add each Param
+	in a given Fact to the Tuple, than add that Tuple to the 
+	appropriate Relation using the Predicate's name.
+
+	Sort the Relations alphabetically.  I believe the Map does
+	this automatically - just iterate thru the keys.  Then you
+	have to sort the Tuples in a relation - a Set, I think, is
+	already ordered, but sorting is easy.  If necessary overload
+	a less than operator for the Tuples using the formula described
+	in the spec.
+
+doing queries:
+	iterate thru the list of Queries.  You might could add a function
+	to DB to do all of this, along the lines of 
+		void queryEval(Predicate & P)
+	Get the right Relation from relations.
+	Select on that Relation over and over for each Param
+	in P.  Do like R == select(where).
+	Then determine which attrs are variables, and project out.
+	Rename: basically change R's scheme to match the 
+	query params, not the original scheme
+
+	Then:
+	Write query, write 
+	NO if R empty
+	Yes(n) with size of final R
+	Output each step.
+	Trouble is, how do you output all this?
+	Do it twice?  Wouldn't be *that* slow, just feels wrong.
+	Maybe save three R's, output to a stream from DB.qEval().
+
+
+Addenda:
+	Relations should have a toString() that returns the 
+	needed string in the right order as described earlier.
+	That way we can just shuttle a bunch of output +='s around
+	like we did with DatalogProgram.
+
+	Make sure everything is passed by reference, if sane!
+
+	
+	
+
+
