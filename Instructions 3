@@ -1,14 +1,14 @@
 building database:
-	first build DP.  then iterate thru DP's Schemes, add each
-	to DB via DB.addRelation() .  They become Relations.  Same
-	thing, really.  (You have to translate the Scheme Predicate
-	into an actual Scheme first.  Do this in the Scheme constructor
-	to save your brain).  
-	Similar for the Facts: Looks like we can just iterate thru
-	each Fact and translate it to a Tuple, then add it to the proper 
-	Relation.  Not sure how to do this.  Most likely add each Param
-	in a given Fact to the Tuple, than add that Tuple to the 
-	appropriate Relation using the Predicate's name.
+-	first build DP.  then iterate thru DP's Schemes, add each
+-	to DB via DB.addRelation() .  They become Relations.  Same
+-	thing, really.  (You have to translate the Scheme Predicate
+-	into an actual Scheme first.  Do this in the Scheme constructor
+-	to save your brain).  
+-	Similar for the Facts: Looks like we can just iterate thru
+-	each Fact and translate it to a Tuple, then add it to the proper 
+-	Relation.  Not sure how to do this.  Most likely add each Param
+-	in a given Fact to the Tuple, than add that Tuple to the 
+-	appropriate Relation using the Predicate's name.
 
 	Sort the Relations alphabetically.  I believe the Map does
 	this automatically - just iterate thru the keys.  Then you
@@ -30,19 +30,22 @@ doing queries:
 
 	Then:
 	Write query, write 
-	NO if R empty
-	Yes(n) with size of final R
-	Output each step.
-	Trouble is, how do you output all this?
-	Do it twice?  Wouldn't be *that* slow, just feels wrong.
-	Maybe save three R's, output to a stream from DB.qEval().
+-	NO if R empty
+-	Yes(n) with size of final R
+-	Output each step.
+-	Trouble is, how do you output all this?
+-	Do it twice?  Wouldn't be *that* slow, just feels wrong.
+-	Maybe save three R's, output to a stream from DB.qEval().
+
+Another way: keep doing toString making strings, then test and either add 
+the results string to the return or just return "No."
 
 
 Addenda:
-	Relations should have a toString() that returns the 
-	needed string in the right order as described earlier.
-	That way we can just shuttle a bunch of output +='s around
-	like we did with DatalogProgram.
+-	Relations should have a toString() that returns the 
+-	needed string in the right order as described earlier.
+-	That way we can just shuttle a bunch of output +='s around
+-	like we did with DatalogProgram.
 
 	Make sure everything is passed by reference, if sane!
 

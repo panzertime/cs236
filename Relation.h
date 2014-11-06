@@ -4,12 +4,15 @@
 #include "Tuple.h"
 #include <string>
 #include "Scheme.h"
+#include "Predicate.h"
 
 class Relation {
 
 public:
 
-	Relation(){
+	Relation(Predicate & src){
+		Name = src.label;
+		scheme = Scheme(src);
 	}
 
 	virtual ~Relation(){
@@ -25,7 +28,7 @@ public:
 
 	Relation select(int pos, string & val){
 		Relation r;
-		for(tuple t : tuples){
+		for(Tuple t : tuples){
 			if (t[pos] == val)				
 				r.add(t);
 		}
@@ -34,7 +37,7 @@ public:
 
 	Relation select(int & pos1, int & pos2){
 		Relation r;
-		for(tuple t : tuples){
+		for(Tuple t : tuples){
 			if (t[pos1] == t[pos2])
 				r.add(t);
 		}
@@ -46,10 +49,21 @@ public:
 		// attrs are copied to new relation
 	}
 
-	Relation rename(/*  ?  */){
-		// what
+	Relation rename(vector<string> vars){
+		// translate scheme of *this* to a new scheme
+		// given in a query
 	}
 
-};
+	string toString(){
+		string r;
+		r += Name += "\n";
+		for (Tuple t : tuples){
+			r += "  ";
+			for (int i = 0; i < scheme.attrs.size(); i++){
+				r += scheme.attrs[i] += "='" += t[i] += "'\n";
+			}
+		}
+		return r;
+	}
 
 #endif
