@@ -44,6 +44,7 @@ Yet another: do just the project, then determine size, then either print "no" or
 print "yes" and do the rest of the steps.  This could actually save a tiny
 amount of time if you have a lot of bad queries.
 
+^^ Might have to do this... complexity is 13 as it stands.  Wow
 
 
 Addenda:
