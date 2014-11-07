@@ -11,8 +11,19 @@ class Relation {
 public:
 
 	Relation(Predicate & src){
-		Name = src.label;
-		scheme = Scheme(src);
+		string Name = src.label;
+		Scheme scheme = Scheme(src);
+	}
+
+	Relation(Scheme & src){
+		Scheme scheme = src;
+		string Name = "no name";
+	}
+
+	Relation(){
+		// nothing... this is for the copy to work
+		Scheme scheme;
+		string Name;
 	}
 
 	virtual ~Relation(){
@@ -26,7 +37,7 @@ public:
 		tuples.insert(t);
 	}
 
-	Relation select(int pos, string & val){
+	Relation select(int & pos, string & val){
 		Relation r;
 		for(Tuple t : tuples){
 			if (t[pos] == val)				
@@ -44,14 +55,39 @@ public:
 		return r;
 	}
 
-	Relation project(vector<int> order){
+	Relation project(vector<int> & order){
 		// go thru "order," use this to determine how 
 		// attrs are copied to new relation
+		//
+		// kind of like make a new relation with
+		// the right scheme, should be fairly easy
+		// maybe new constructor for Scheme()?
+		//
+		// then go thru the tuples, make a new tuple based on
+		// order, add to new relation
+		
+		vector<string> attrs;
+		for(auto index : order){
+			attrs.push_back(scheme.attrs[index]);
+		}
+		
+		Scheme s = Scheme(attrs);
+		Relation r = Relation(s);
+
+		for(Tuple t : tuples){
+			Tuple n;
+			for(auto index : order){
+				n.push_back(t[index]);
+			}
+			r.add(n);
+		}
+		
+		return r;
 	}
 
 	Relation rename(vector<string> vars){
-		// translate scheme of *this* to a new scheme
-		// given in a query
+		Scheme ns = Scheme(vars);
+		return Relation(ns);
 	}
 
 	string toString(){
@@ -60,10 +96,12 @@ public:
 		for (Tuple t : tuples){
 			r += "  ";
 			for (int i = 0; i < scheme.attrs.size(); i++){
-				r += scheme.attrs[i] += "='" += t[i] += "'\n";
+				r += scheme.attrs[i] += "='";
+				r += t[i] += "'\n";
 			}
 		}
 		return r;
 	}
+};
 
 #endif

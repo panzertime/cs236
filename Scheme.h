@@ -28,6 +28,17 @@ public:
 		}	
 	}
 
+	Scheme(vector<string> & src){
+		attrs = src;
+		for (auto a : src){
+			vars.push_back(1);
+		}
+	}
+
+	Scheme(){
+		// nothing
+	}
+
 	virtual ~Scheme(){
 	}
 

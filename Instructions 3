@@ -18,15 +18,15 @@ building database:
 	in the spec.
 
 doing queries:
-	iterate thru the list of Queries.  You might could add a function
-	to DB to do all of this, along the lines of 
-		void queryEval(Predicate & P)
-	Get the right Relation from relations.
-	Select on that Relation over and over for each Param
-	in P.  Do like R == select(where).
-	Then determine which attrs are variables, and project out.
-	Rename: basically change R's scheme to match the 
-	query params, not the original scheme
+-	iterate thru the list of Queries.  You might could add a function
+-	to DB to do all of this, along the lines of 
+-		void queryEval(Predicate & P)
+-	Get the right Relation from relations.
+-	Select on that Relation over and over for each Param
+-	in P.  Do like R == select(where).
+-	Then determine which attrs are variables, and project out.
+-	Rename: basically change R's scheme to match the 
+-	query params, not the original scheme
 
 	Then:
 	Write query, write 
@@ -39,6 +39,11 @@ doing queries:
 
 Another way: keep doing toString making strings, then test and either add 
 the results string to the return or just return "No."
+
+Yet another: do just the project, then determine size, then either print "no" or
+print "yes" and do the rest of the steps.  This could actually save a tiny
+amount of time if you have a lot of bad queries.
+
 
 
 Addenda:

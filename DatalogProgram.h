@@ -11,7 +11,7 @@ using namespace std;
 
 class DatalogProgram {
 
-private:
+public:
 	vector<Predicate> Schemes;
 	vector<Predicate> Facts;
 	vector<Rule> Rules;

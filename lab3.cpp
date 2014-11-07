@@ -1,6 +1,6 @@
 /*	
 *
-*	Scanner for Datalog language - part one of
+*	Interpreter for Datalog language - part three of
 *	Datalog REPL
 *
 */
@@ -9,6 +9,7 @@
 #include "Scanner.h"
 #include "DatalogProgram.h"
 #include "Parser.h"
+#include "Database.h"
 #include <vector>
 #include <fstream>
 
@@ -27,8 +28,9 @@ int main(int argc, const char** argv){
 		DatalogProgram DProg = p.parse();
 		DProg.createDomain();
 		out << "Success!" << endl;
-		out << DProg.toString();
-		
+	//	out << DProg.toString();
+		Database DB = Database(DB);
+		out << DB.toString();
 	}
 	catch (Token e){
 		out << "Failure!" << endl;

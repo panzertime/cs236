@@ -33,6 +33,17 @@ public:
 
 	map<string,Relation> relations;
 
+	string toString(){
+		string s;
+		s += "Scheme Evaluation\n\n";
+		s += "Fact Evaluation\n\n";
+		for (auto r : relations){
+			s += get<1>(r).Name += "\n";
+			s += get<1>(r).toString();
+		}
+		return s;
+	}
+
 	void addRelation(Predicate & src){
 		relations[src.label] = Relation(src);
 	}
@@ -41,18 +52,37 @@ public:
 		Relation src = relations[q.label];
 		Relation projected;
 		Relation renamed;
-		for (Parameter s : w.params){
-			if(param.ID){
-				// select variable
+		for (int i = 0; i < q.params.size(); i++){
+			if(q.params[i].ID){
+				for(int other = i; i < q.params.size(); other++){
+					if (q.params[other].ID && (q.params[other].value == q.params[i].value))
+						src = src.select(i,other);
+				}
 			}
-			if(!(param.ID)){
-				// select constant
+			if(!(q.params[i].ID)){
+				src = src.select(i, q.params[i].value);
 			}
 		}
-		vector<int> cols = ;
-			// figure out how to project exactly
+		vector<int> cols;
+		for (int i = 0; i < q.params.size(); i++){
+			// if param is var, then add param # to cols
+			// somehow avoid doubles
+			
+			if(q.params[i].ID)
+				cols.push_back(i);
+			for (int k = 0; k < i; k++){
+				if(q.params[i].value == q.params[k].value)
+					cols.pop_back();
+			}	// this is checking if i've already added that var,
+				// then deleting it from end if I have.
+				// "slow" but should work well.
+		}
+
 		projected = src.project(cols);
-		vector<string> vars = ;
+		vector<string> vars;
+		for (auto index : cols){
+			vars.push_back(q.params[index].value);
+		}
 			// figure out how to rename exactly
 		renamed = src.rename(vars);
 		
@@ -61,9 +91,13 @@ public:
 		}
 		else {
 			string r;
-			r += "Yes(" += projected.tuples.size() += ")\n";
+			r += "Yes(";
+			r += projected.tuples.size();
+			r += ")\nselect\n";
 			r += src.toString();
+			r += "project\n";
 			r += projected.toString();
+			r += "rename\n";
 			r += renamed.toString();
 
 			return r;
