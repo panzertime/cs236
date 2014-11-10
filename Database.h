@@ -6,6 +6,7 @@
 #include "Scheme.h"
 #include "DatalogProgram.h"
 #include "Predicate.h"
+#include <sstream>
 
 class Database {
 
@@ -60,9 +61,9 @@ public:
 
 		Relation projected;
 		Relation renamed;
-		for (int i = 0; i < q.params.size(); i++){
+		for (int i = 0; i < (int) q.params.size(); i++){
 			if(q.params[i].ID){
-				for(int other = i; i < q.params.size(); other++){
+				for(int other = i; other < (int) q.params.size(); other++){
 					if (q.params[other].ID && (q.params[other].value == q.params[i].value))
 						src = src.select(i,other);
 				}
@@ -72,7 +73,7 @@ public:
 			}
 		}
 		vector<int> cols;
-		for (int i = 0; i < q.params.size(); i++){
+		for (int i = 0; i < (int) q.params.size(); i++){
 			// if param is var, then add param # to cols
 			// somehow avoid doubles
 			
@@ -88,19 +89,22 @@ public:
 
 		projected = src.project(cols);
 		vector<string> vars;
-		for (auto index : cols){
+		for (int i = 0; i < (int) cols.size(); i++){
+			int index = cols[i];
 			vars.push_back(q.params[index].value);
 		}
 			// figure out how to rename exactly
 		renamed = src.rename(vars);
 		
-		if (projected.tuples.size() == 0){
+		if (src.tuples.size() == 0){
 			return ("No\n");
 		}
 		else {
 			string r;
 			r += "Yes(";
-			r += projected.tuples.size();
+			stringstream size;
+			size << src.tuples.size();
+			r += size.str();
 			r += ")\nselect\n";
 			r += src.toString();
 			r += "project\n";

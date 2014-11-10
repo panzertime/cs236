@@ -39,7 +39,7 @@ Scheme scheme;
 	}
 
 	Relation select(int & pos, string & val){
-		Relation r;
+		Relation r = Relation(scheme);
 		for(Tuple t : tuples){
 			if (t[pos] == val)				
 				r.add(t);
@@ -48,7 +48,7 @@ Scheme scheme;
 	}
 
 	Relation select(int & pos1, int & pos2){
-		Relation r;
+		Relation r = Relation(scheme);
 		for(Tuple t : tuples){
 			if (t[pos1] == t[pos2])
 				r.add(t);
@@ -68,7 +68,8 @@ Scheme scheme;
 		// order, add to new relation
 		
 		vector<string> attrs;
-		for(auto index : order){
+		for(int i = 0; i < (int) order.size(); i++){
+			int index = order[i];
 			attrs.push_back(scheme.attrs[index]);
 		}
 		
@@ -88,28 +89,35 @@ Scheme scheme;
 
 	Relation rename(vector<string> vars){
 		Scheme ns = Scheme(vars);
-		return Relation(ns);
+		Relation r = Relation(ns);
+		r.tuples = tuples;
+		return r;
 	}
 
 	string toString(){
-	string r;
+		string r;
 //		r += Name += "\n";
-		for (Tuple t : tuples){
-			r += "  ";
-			for (int i = 0; i < scheme.attrs.size(); i++){
-				r += scheme.attrs[i];
-				r += "='";
-		/* 	Somehow this line:
-				r += scheme.attrs[i] += "='";
-			was outputting ridiculous lines where
-			the number of =' was equal to the i+1.
-			NO IDEA how or why, but separating
-			those two fixed it.
-			Man, C++ += is a weird beast;
-		*/
-				r += t[i] += "' ";
+		if(!tuples.empty()){
+			for (Tuple t : tuples){
+				r += "  ";
+				for (int i = 0; i < (int) scheme.attrs.size(); i++){
+					r += scheme.attrs[i];
+					r += "='";
+			/* 	Somehow this line:
+					r += scheme.attrs[i] += "='";
+				was outputting ridiculous lines where
+				the number of =' was equal to the i+1.
+				NO IDEA how or why, but separating
+				those two fixed it.
+				Man, C++ += is a weird beast;
+			*/
+					r += t[i] += "' ";
+				}
+//				if(scheme.attrs.empty()){
+//					r += "EMPTY SCHEME";
+//				}
+				r += "\n";
 			}
-			r += "\n";
 		}
 		return r;
 	}

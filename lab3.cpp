@@ -27,13 +27,15 @@ int main(int argc, const char** argv){
 	try{
 		DatalogProgram DProg = p.parse();
 		DProg.createDomain();
-		out << "Success!" << endl;
+	//	out << "Success!" << endl;
 	//	out << DProg.toString();
 		Database DB = Database(DProg);
 		out << DB.toString();
 		out << "\nQuery Evaluation\n\n";
 		for (auto p : DProg.Queries){
-			DB.queryEval(p);
+			out << p.toString() << "? ";
+			out << DB.queryEval(p);
+			
 		}
 	}
 	catch (Token e){
