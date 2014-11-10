@@ -37,9 +37,9 @@ public:
 		string s;
 		s += "Scheme Evaluation\n\n";
 		s += "Fact Evaluation\n\n";
-		for (auto r : relations){
-			s += get<1>(r).Name += "\n";
-			s += get<1>(r).toString();
+		for (map<string,Relation>::iterator i = relations.begin(); i != relations.end(); i++){
+			s += i->second.Name += "\n";
+			s += i->second.toString();
 		}
 		return s;
 	}
@@ -50,6 +50,14 @@ public:
 	
 	string queryEval(Predicate & q) {
 		Relation src = relations[q.label];
+	// either a copy constructor is needed in
+	// Relation.h or we need to be careful that
+	// q.label points to an extant relation
+	//
+	// somehow a segfault, presumably here,
+	// is killing the execution before even printing 
+	// the DB.
+
 		Relation projected;
 		Relation renamed;
 		for (int i = 0; i < q.params.size(); i++){

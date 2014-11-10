@@ -29,8 +29,12 @@ int main(int argc, const char** argv){
 		DProg.createDomain();
 		out << "Success!" << endl;
 	//	out << DProg.toString();
-		Database DB = Database(DB);
+		Database DB = Database(DProg);
 		out << DB.toString();
+		out << "\nQuery Evaluation\n\n";
+		for (auto p : DProg.Queries){
+			DB.queryEval(p);
+		}
 	}
 	catch (Token e){
 		out << "Failure!" << endl;

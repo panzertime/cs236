@@ -10,28 +10,29 @@ class Relation {
 
 public:
 
+string Name;
+Scheme scheme;
+
 	Relation(Predicate & src){
-		string Name = src.label;
-		Scheme scheme = Scheme(src);
+		Name = src.label;
+		scheme = Scheme(src);
 	}
 
 	Relation(Scheme & src){
-		Scheme scheme = src;
-		string Name = "no name";
+		scheme = src;
+		Name = "no name";
 	}
 
 	Relation(){
 		// nothing... this is for the copy to work
-		Scheme scheme;
-		string Name;
+		
+	
 	}
 
 	virtual ~Relation(){
 	}
 
 	set<Tuple> tuples;
-	string Name;
-	Scheme scheme;
 
 	void add(Tuple & t){
 		tuples.insert(t);
@@ -91,14 +92,24 @@ public:
 	}
 
 	string toString(){
-		string r;
-		r += Name += "\n";
+	string r;
+//		r += Name += "\n";
 		for (Tuple t : tuples){
 			r += "  ";
 			for (int i = 0; i < scheme.attrs.size(); i++){
+				r += scheme.attrs[i];
+				r += "='";
+		/* 	Somehow this line:
 				r += scheme.attrs[i] += "='";
-				r += t[i] += "'\n";
+			was outputting ridiculous lines where
+			the number of =' was equal to the i+1.
+			NO IDEA how or why, but separating
+			those two fixed it.
+			Man, C++ += is a weird beast;
+		*/
+				r += t[i] += "' ";
 			}
+			r += "\n";
 		}
 		return r;
 	}
