@@ -81,6 +81,7 @@ Scheme scheme;
 			for(auto index : order){
 				n.push_back(t[index]);
 			}
+
 			r.add(n);
 		}
 		
@@ -89,8 +90,9 @@ Scheme scheme;
 
 	Relation rename(vector<string> vars){
 		Scheme ns = Scheme(vars);
-		Relation r = Relation(ns);
+		Relation r;
 		r.tuples = tuples;
+		r.scheme = ns;
 		return r;
 	}
 

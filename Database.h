@@ -48,6 +48,21 @@ public:
 	void addRelation(Predicate & src){
 		relations[src.label] = Relation(src);
 	}
+
+	void selection(Relation & r, Predicate & q){
+		for (int i = 0; i < (int) q.params.size(); i++){
+			if(q.params[i].ID){
+				for(int other = i; other < (int) q.params.size(); other++){
+					if (q.params[other].ID && (q.params[other].value == q.params[i].value))
+							r = r.select(i,other);
+				}
+			}
+			if(!(q.params[i].ID)){
+				r = r.select(i, q.params[i].value);
+			}
+		}
+	}
+
 	
 	string queryEval(Predicate & q) {
 		Relation src = relations[q.label];
@@ -61,17 +76,7 @@ public:
 
 		Relation projected;
 		Relation renamed;
-		for (int i = 0; i < (int) q.params.size(); i++){
-			if(q.params[i].ID){
-				for(int other = i; other < (int) q.params.size(); other++){
-					if (q.params[other].ID && (q.params[other].value == q.params[i].value))
-						src = src.select(i,other);
-				}
-			}
-			if(!(q.params[i].ID)){
-				src = src.select(i, q.params[i].value);
-			}
-		}
+		selection(src, q);
 		vector<int> cols;
 		for (int i = 0; i < (int) q.params.size(); i++){
 			// if param is var, then add param # to cols
@@ -94,7 +99,7 @@ public:
 			vars.push_back(q.params[index].value);
 		}
 			// figure out how to rename exactly
-		renamed = src.rename(vars);
+		renamed = projected.rename(vars);
 		
 		if (src.tuples.size() == 0){
 			return ("No\n");
