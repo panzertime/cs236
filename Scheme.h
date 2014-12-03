@@ -4,6 +4,7 @@
 #include <vector>
 #include "Predicate.h"
 #include "Parameter.h"
+#include <algorithm>
 
 class Scheme {
 
@@ -40,6 +41,15 @@ public:
 	}
 
 	virtual ~Scheme(){
+	}
+
+	Scheme	makeScheme(Scheme s2){
+		Scheme s = Scheme(attrs);
+		for (auto thing : s2.attrs){
+			if(count(s.attrs.begin(); s.attrs.end(); thing) = 0)
+				s.attrs.push_back(thing);
+		}
+		return s;
 	}
 
 	vector<string> attrs;

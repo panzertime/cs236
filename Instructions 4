@@ -21,19 +21,19 @@ OK - adding "union" and "join."
 		it seems like it's in DB.h)
 	(this will need to run several times until DB.size
 		does not change)
-		(so implement DB.size:
-			something like increment a counter for
-			every tuple added to a relation in the
-			database)
+-		(so implement DB.size:
+-			something like increment a counter for
+-			every tuple added to a relation in the
+-			database)
 	
 	ok the join and union will go into relation
 		rule eval algo given in spec (not fave format)
-		needs: joinable(•)
-			i have this
-			could change inputs to be relation1, relation2
-			actually no it's stupid to do that
-		needs: makescheme(•)
-			i have this, might already be implemented
+-		needs: joinable(•)
+-			i have this
+-			could change inputs to be relation1, relation2
+-			actually no it's stupid to do that
+-		needs: makescheme(•)
+-			i have this, might already be implemented
 		needs: maketuple(•) / join(•)
 			i have this.
 

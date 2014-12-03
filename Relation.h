@@ -38,6 +38,18 @@ Scheme scheme;
 		tuples.insert(t);
 	}
 
+	bool joinable(Tuple t1, Tuple t2, Scheme s1, Scheme s2){
+		for(unsigned outer = 0; outer < t1.size; outer++){
+			for(unsigned inner = 0; inner < t2.size; inner++){
+				if(s1[outer] == s2[inner] && t1[outer] != t2[inner])
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	Tuple makeTuple(Tuple t1, Tuple t2)
+
 	Relation select(int & pos, string & val){
 		Relation r = Relation(scheme);
 		for(Tuple t : tuples){

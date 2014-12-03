@@ -39,7 +39,7 @@ int main(int argc, const char** argv){
 				rename to match head.scheme
 				union with proper relation in DB.relations
 		*/
-
+		
 		out << "\nQuery Evaluation\n\n";
 		for (auto p : DProg.Queries){
 			out << p.toString() << "? ";
