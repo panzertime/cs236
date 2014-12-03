@@ -1,0 +1,53 @@
+OK - adding "union" and "join."
+	as far as I can tell, a union should be simple, just
+	the columns all in one new Scheme, all tuples copied
+	join, I have a complete algo, just need to write it
+	out and comply with complexity rules
+
+	how to actually process the rules
+	for each rule : DP.rules{
+		DB.rule(rule){
+			understand:
+			for each predicate on the right:
+				queryEval(predicate);
+			execute:
+				join all those new relations;
+				project to match head.scheme;
+				rename to match head.scheme;
+				union with the relation
+					matching head.scheme;
+		}
+	(this, obviously, is in lab4.cpp - in the spec
+		it seems like it's in DB.h)
+	(this will need to run several times until DB.size
+		does not change)
+		(so implement DB.size:
+			something like increment a counter for
+			every tuple added to a relation in the
+			database)
+	
+	ok the join and union will go into relation
+		rule eval algo given in spec (not fave format)
+		needs: joinable(•)
+			i have this
+			could change inputs to be relation1, relation2
+			actually no it's stupid to do that
+		needs: makescheme(•)
+			i have this, might already be implemented
+		needs: maketuple(•) / join(•)
+			i have this.
+
+		so we'll make a new scheme and empty relation with 
+		that scheme, then run thru each tuple in the relations
+		(n^2)
+			and do: 
+			if(joinable(•))
+				newRel.add(maketuple(•));
+
+		union is simple: just add all the tuples to 
+			a given relation from your source
+
+	possible hiccup, apparently: project(•) is broken
+		for reordering scheme attrs.  if we have big problems
+		this is *the most likely* source.
+		
