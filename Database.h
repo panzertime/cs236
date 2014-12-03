@@ -7,6 +7,7 @@
 #include "DatalogProgram.h"
 #include "Predicate.h"
 #include <sstream>
+#include <assert.h>
 
 class Database {
 
@@ -26,10 +27,22 @@ public:
 		//
 		// sort the map?  if so, how exactly?
 		// sort the tuples?  if so, how exactly?
-		// 
+		//
 	}
 
 	virtual ~Database(){
+	}
+
+	int size(){
+		int count = 0;
+		if (relations.empty()){
+			return 0;
+		}
+		for(map<string,Relation>::iterator i = relations.begin(); i != relations.end(); i++){
+			count += i->second.tuples.size();
+			assert(count >= 0);
+		}
+		return count;
 	}
 
 	map<string,Relation> relations;
