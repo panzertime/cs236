@@ -43,7 +43,7 @@ public:
 	virtual ~Scheme(){
 	}
 
-	Scheme	makeScheme(Scheme s2){
+	Scheme	makeScheme(Scheme & s2){
 		Scheme s = Scheme(attrs);
 		for (auto thing : s2.attrs){
 			if(count(s.attrs.begin(); s.attrs.end(); thing) = 0)

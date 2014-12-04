@@ -10,6 +10,7 @@
 #include "DatalogProgram.h"
 #include "Parser.h"
 #include "Database.h"
+#include "Predicate.h"
 #include <vector>
 #include <fstream>
 
@@ -39,6 +40,17 @@ int main(int argc, const char** argv){
 				rename to match head.scheme
 				union with proper relation in DB.relations
 		*/
+		for(unsigned i = 0; i < DProg.Rules.size(); i++){
+			vector<Relation> tails;
+			for(unsigned k = 0; k < DProg.Rules[i].tail.size(); k++){
+				tails.push_back(DB.predPrep(DProg.Rules[i].tail[k]));
+			}
+			Relation sum = tails[0];
+			for(unsigned d = 1; d < tails.size(); d++){
+				sum = sum.join(tails[d]);
+			}
+		}	
+
 		
 		out << "\nQuery Evaluation\n\n";
 		for (auto p : DProg.Queries){

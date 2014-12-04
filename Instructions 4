@@ -10,6 +10,10 @@ OK - adding "union" and "join."
 			understand:
 			for each predicate on the right:
 				queryEval(predicate);
+				// push these into a vector
+				// is probably the most straight-forward
+				// way to deal with this, tho not
+				// maybe the coolest
 			execute:
 				join all those new relations;
 				project to match head.scheme;
@@ -34,18 +38,18 @@ OK - adding "union" and "join."
 -			actually no it's stupid to do that
 -		needs: makescheme(•)
 -			i have this, might already be implemented
-		needs: maketuple(•) / join(•)
-			i have this.
+-		needs: maketuple(•) / join(•)
+-			i have this.
 
-		so we'll make a new scheme and empty relation with 
-		that scheme, then run thru each tuple in the relations
-		(n^2)
-			and do: 
-			if(joinable(•))
-				newRel.add(maketuple(•));
+-		so we'll make a new scheme and empty relation with 
+-		that scheme, then run thru each tuple in the relations
+-		(n^2)
+-			and do: 
+-			if(joinable(•))
+-				newRel.add(maketuple(•));
 
-		union is simple: just add all the tuples to 
-			a given relation from your source
+-		union is simple: just add all the tuples to 
+-			a given relation from your source
 
 	possible hiccup, apparently: project(•) is broken
 		for reordering scheme attrs.  if we have big problems

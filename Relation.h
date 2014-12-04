@@ -5,6 +5,7 @@
 #include <string>
 #include "Scheme.h"
 #include "Predicate.h"
+#include <algorithm>
 
 class Relation {
 
@@ -38,7 +39,7 @@ Scheme scheme;
 		tuples.insert(t);
 	}
 
-	bool joinable(Tuple t1, Tuple t2, Scheme s1, Scheme s2){
+	bool joinable(Tuple & t1, Tuple & t2, Scheme & s1, Scheme & s2){
 		for(unsigned outer = 0; outer < t1.size; outer++){
 			for(unsigned inner = 0; inner < t2.size; inner++){
 				if(s1[outer] == s2[inner] && t1[outer] != t2[inner])
@@ -48,7 +49,38 @@ Scheme scheme;
 		return true;
 	}
 	
-	Tuple makeTuple(Tuple t1, Tuple t2)
+	Tuple makeTuple(Tuple & t1, Tuple & t2,Scheme & s1, Scheme & s2){
+		//idk, but this is actually what joining is
+		Tuple result = t1;
+		for (auto v2 : t2){
+			for (auto n2: s2){
+				if(count(s1.begin(),s1.end(),n2)
+					result.add(v2);
+			}
+		}
+		return result;
+	}
+
+	Relation join(Relation & r2){
+		Relation result = Relation(scheme.makeScheme(r2.scheme));
+		for (set<Tuple>::iterator thist = tuples.begin(); thist != tuples.end(); thist++){
+			for (set<Tuple>::iterator thatt = r2.tuples.begin(); thatt != r2.tuples.end(); thatt++){
+				if(joinable(tuples[thist], r2.tuples[thatt], scheme, r2.scheme){
+					Tuple nt = makeTuple(tuples[thist] ,r2.tuples[thatt], scheme, r2.scheme);
+					result.add(nt);
+				}
+			}
+		}
+		return result;
+	}
+
+	void unionWith(Relation & r2){
+		assert(scheme == r2.scheme);
+		//add all tuples from r2 to this.tuples
+		for (set<Tuple>::iterator t = r2.tuples.begin(); t != r2.tuples.end(); t++){
+			add(r2.tuples[t]);
+		}
+	}
 
 	Relation select(int & pos, string & val){
 		Relation r = Relation(scheme);
