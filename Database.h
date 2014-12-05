@@ -75,7 +75,6 @@ public:
 			}
 		}
 	}
-
 	
 	Relation predPrep(Predicate & q) {
 		Relation src = relations[q.label];

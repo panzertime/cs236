@@ -35,38 +35,41 @@ Scheme scheme;
 
 	set<Tuple> tuples;
 
-	void add(Tuple & t){
+	void add(const Tuple & t){
 		tuples.insert(t);
 	}
 
-	bool joinable(Tuple & t1, Tuple & t2, Scheme & s1, Scheme & s2){
-		for(unsigned outer = 0; outer < t1.size; outer++){
-			for(unsigned inner = 0; inner < t2.size; inner++){
-				if(s1[outer] == s2[inner] && t1[outer] != t2[inner])
+	bool joinable(const Tuple & t1, const Tuple & t2, Scheme & s1, Scheme & s2){
+		for(unsigned outer = 0; outer < t1.size(); outer++){
+			for(unsigned inner = 0; inner < t2.size(); inner++){
+				if(s1.attrs[outer] == s2.attrs[inner] && t1[outer] != t2[inner])
 					return false;
 			}
 		}
 		return true;
 	}
 	
-	Tuple makeTuple(Tuple & t1, Tuple & t2,Scheme & s1, Scheme & s2){
+	Tuple makeTuple(const Tuple & t1, const Tuple & t2,Scheme & s1, Scheme & s2){
 		//idk, but this is actually what joining is
 		Tuple result = t1;
 		for (auto v2 : t2){
-			for (auto n2: s2){
-				if(count(s1.begin(),s1.end(),n2)
-					result.add(v2);
+			for (auto n2: s2.attrs){
+				if(count(s1.attrs.begin(),s1.attrs.end(),n2))
+					result.push_back(v2);
 			}
 		}
 		return result;
 	}
 
 	Relation join(Relation & r2){
-		Relation result = Relation(scheme.makeScheme(r2.scheme));
+		Scheme ns = scheme.makeScheme(r2.scheme);
+		Relation result = Relation(ns);
 		for (set<Tuple>::iterator thist = tuples.begin(); thist != tuples.end(); thist++){
 			for (set<Tuple>::iterator thatt = r2.tuples.begin(); thatt != r2.tuples.end(); thatt++){
-				if(joinable(tuples[thist], r2.tuples[thatt], scheme, r2.scheme){
-					Tuple nt = makeTuple(tuples[thist] ,r2.tuples[thatt], scheme, r2.scheme);
+			//	if(joinable(tuples[thist], r2.tuples[thatt], scheme, r2.scheme){
+			//		Tuple nt = makeTuple(tuples[thist] ,r2.tuples[thatt], scheme, r2.scheme);
+				if(joinable(*thist, *thatt, scheme, r2.scheme)){
+					Tuple nt = makeTuple(*thist, *thatt, scheme, r2.scheme);
 					result.add(nt);
 				}
 			}
@@ -75,10 +78,10 @@ Scheme scheme;
 	}
 
 	void unionWith(Relation & r2){
-		assert(scheme == r2.scheme);
+	//	assert(scheme == r2.scheme);
 		//add all tuples from r2 to this.tuples
 		for (set<Tuple>::iterator t = r2.tuples.begin(); t != r2.tuples.end(); t++){
-			add(r2.tuples[t]);
+			add(*t);
 		}
 	}
 

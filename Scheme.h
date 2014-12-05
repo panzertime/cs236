@@ -46,7 +46,7 @@ public:
 	Scheme	makeScheme(Scheme & s2){
 		Scheme s = Scheme(attrs);
 		for (auto thing : s2.attrs){
-			if(count(s.attrs.begin(); s.attrs.end(); thing) = 0)
+			if(count(s.attrs.begin(), s.attrs.end(), thing) == 0)
 				s.attrs.push_back(thing);
 		}
 		return s;

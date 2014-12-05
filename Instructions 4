@@ -8,16 +8,16 @@ OK - adding "union" and "join."
 	for each rule : DP.rules{
 		DB.rule(rule){
 			understand:
-			for each predicate on the right:
-				queryEval(predicate);
-				// push these into a vector
-				// is probably the most straight-forward
-				// way to deal with this, tho not
-				// maybe the coolest
-			execute:
-				join all those new relations;
-				project to match head.scheme;
-				rename to match head.scheme;
+-			for each predicate on the right:
+-				queryEval(predicate);
+-				// push these into a vector
+-				// is probably the most straight-forward
+-				// way to deal with this, tho not
+-				// maybe the coolest
+-			execute:
+-				join all those new relations;
+-				project to match head.scheme;
+-				rename to match head.scheme;
 				union with the relation
 					matching head.scheme;
 		}
