@@ -58,6 +58,7 @@ Scheme scheme;
 					result.push_back(v2);
 			}
 		}
+
 		return result;
 	}
 
@@ -70,6 +71,11 @@ Scheme scheme;
 			//		Tuple nt = makeTuple(tuples[thist] ,r2.tuples[thatt], scheme, r2.scheme);
 				if(joinable(*thist, *thatt, scheme, r2.scheme)){
 					Tuple nt = makeTuple(*thist, *thatt, scheme, r2.scheme);
+cout << "New tuple: " << endl;
+for (auto qoi : nt){
+cout << qoi << " - ";
+}
+cout << endl;
 					result.add(nt);
 				}
 			}

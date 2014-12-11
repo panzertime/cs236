@@ -47,21 +47,48 @@ int main(int argc, const char** argv){
 				}
 				// ok, now project to match head.scheme
 				// make column vector
+	cout << "Joined vector: " << endl;
+	cout << sum.toString();
+	cout << "	but: " << endl;
+	for(set<Tuple>::iterator roy = sum.tuples.begin(); roy != sum.tuples.end(); roy++){
+		for( auto ray : *roy){
+	cout << ray << " - ";
+	}
+	cout << endl;
+	}
 				vector<int> cols;
+//				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){
+//					// if param is var, then add param # to cols
+//					// somehow avoid doubles
+//			
+//					if(DProg.Rules[i].head.params[z].ID)
+//						cols.push_back(z);
+//					for (int k = 0; k < z; k++){
+//						if(DProg.Rules[i].head.params[z].value == DProg.Rules[i].head.params[k].value)
+//							cols.pop_back();
+//					}	// this is checking if i've already added that var,
+//						// then deleting it from end if I have.
+//						// "slow" but should work well.
+//				}
+				// redo column generation
+				// take next attr in head, find column in joined, then push_back
 				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){
-					// if param is var, then add param # to cols
-					// somehow avoid doubles
-			
-					if(DProg.Rules[i].head.params[z].ID)
-						cols.push_back(z);
-					for (int k = 0; k < z; k++){
-						if(DProg.Rules[i].head.params[z].value == DProg.Rules[i].head.params[k].value)
-							cols.pop_back();
-					}	// this is checking if i've already added that var,
-						// then deleting it from end if I have.
-						// "slow" but should work well.
+					if (DProg.Rules[i].head.params[z].ID){
+						for (int k = 0; k < sum.scheme.attrs.size(); k++){
+							if (DProg.Rules[i].head.params[z].value == sum.scheme.attrs[k]){
+								cols.push_back(k);
+							}
+						}
+					}
 				}
+					
+	cout << "Columns: " << endl;
+	for (auto things : cols){
+	cout << things << endl;
+	}
 				sum = sum.project(cols);
+	cout << "Projected vector: " << endl;
+	cout << sum.toString();
 				// then rename to match head.scheme
 				vector<string> vars;
 				for (int z = 0; z < (int) cols.size(); z++){

@@ -54,4 +54,16 @@ OK - adding "union" and "join."
 	possible hiccup, apparently: project(•) is broken
 		for reordering scheme attrs.  if we have big problems
 		this is *the most likely* source.
-		
+	
+
+   ->	need to make sure that we only output changed tuples, i guess
+   ->	i think a problem is i'm not projecting the free variables
+   		properly.  need to inspect that i'm using the head
+		as a screen for projecting from the join,
+		which will include (usually) all the columns in the
+		related tables, to a new relation.
+		Seems a problem is that I'm maybe losing attribute
+		names when I join.  Or not.
+
+ 	YUP DEFINITELY THE PROJECT AFTER JOIN!
+
