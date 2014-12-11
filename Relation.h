@@ -52,10 +52,15 @@ Scheme scheme;
 	Tuple makeTuple(const Tuple & t1, const Tuple & t2,Scheme & s1, Scheme & s2){
 		//idk, but this is actually what joining is
 		Tuple result = t1;
-		for (auto v2 : t2){
-			for (auto n2: s2.attrs){
-				if(count(s1.attrs.begin(),s1.attrs.end(),n2))
-					result.push_back(v2);
+//		for (auto v2 : t2){
+//			for (auto n2: s2.attrs){
+//				if(count(s1.attrs.begin(),s1.attrs.end(),n2))
+//					result.push_back(v2);
+//			}
+//		}
+		for (int index = 0; index < (int) t2.size(); index ++){
+			if(count(s1.attrs.begin(),s1.attrs.end(), s2.attrs[index]) == 0){
+				result.push_back(t2[index]);
 			}
 		}
 
@@ -71,15 +76,24 @@ Scheme scheme;
 			//		Tuple nt = makeTuple(tuples[thist] ,r2.tuples[thatt], scheme, r2.scheme);
 				if(joinable(*thist, *thatt, scheme, r2.scheme)){
 					Tuple nt = makeTuple(*thist, *thatt, scheme, r2.scheme);
-cout << "New tuple: " << endl;
-for (auto qoi : nt){
-cout << qoi << " - ";
-}
-cout << endl;
+//cout << "New tuple: " << endl;
+//for (auto qoi : nt){
+//cout << qoi << " - ";
+//}
+//cout << endl;
 					result.add(nt);
 				}
 			}
 		}
+//cout << "As seen by the program or w/e: " << endl;
+//for (set<Tuple>::iterator thist = result.tuples.begin(); thist != result.tuples.end(); thist++){
+//for (auto qu : *thist){
+//cout << qu << " - ";
+//}
+//cout << endl;
+//}
+//cout << "But toString(); sees it differently, guess from the scheme: " << endl;
+//cout << result.toString();
 		return result;
 	}
 

@@ -11,6 +11,7 @@
 #include "Parser.h"
 #include "Database.h"
 #include "Predicate.h"
+#include <string>
 #include <vector>
 #include <fstream>
 
@@ -47,15 +48,15 @@ int main(int argc, const char** argv){
 				}
 				// ok, now project to match head.scheme
 				// make column vector
-	cout << "Joined vector: " << endl;
-	cout << sum.toString();
-	cout << "	but: " << endl;
-	for(set<Tuple>::iterator roy = sum.tuples.begin(); roy != sum.tuples.end(); roy++){
-		for( auto ray : *roy){
-	cout << ray << " - ";
-	}
-	cout << endl;
-	}
+//	cout << "Joined vector: " << endl;
+//	cout << sum.toString();
+//	cout << "	but: " << endl;
+//	for(set<Tuple>::iterator roy = sum.tuples.begin(); roy != sum.tuples.end(); roy++){
+//		for( auto ray : *roy){
+//	cout << ray << " - ";
+//	}
+//	cout << endl;
+//	}
 				vector<int> cols;
 //				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){
 //					// if param is var, then add param # to cols
@@ -74,7 +75,7 @@ int main(int argc, const char** argv){
 				// take next attr in head, find column in joined, then push_back
 				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){
 					if (DProg.Rules[i].head.params[z].ID){
-						for (int k = 0; k < sum.scheme.attrs.size(); k++){
+						for (int k = 0; k < (int) sum.scheme.attrs.size(); k++){
 							if (DProg.Rules[i].head.params[z].value == sum.scheme.attrs[k]){
 								cols.push_back(k);
 							}
@@ -82,30 +83,42 @@ int main(int argc, const char** argv){
 					}
 				}
 					
-	cout << "Columns: " << endl;
-	for (auto things : cols){
-	cout << things << endl;
-	}
+//	cout << "Columns: " << endl;
+//	for (auto things : cols){
+//	cout << things << endl;
+//	}
 				sum = sum.project(cols);
-	cout << "Projected vector: " << endl;
-	cout << sum.toString();
+//	cout << "Projected vector: " << endl;
+//	cout << sum.toString();
 				// then rename to match head.scheme
 				vector<string> vars;
-				for (int z = 0; z < (int) cols.size(); z++){
-					int index = cols[z];
-					vars.push_back(DProg.Rules[i].head.params[index].value);
+				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){ 
+					vars.push_back(DProg.Rules[i].head.params[z].value);
 				}
 				sum = sum.rename(vars);
-				out << sum.toString() << endl;
 				// at this point "sum" should be the fully projected and stuff
 				// and ready to union with the stuff in the DB
 				DB.relations[DProg.Rules[i].head.label].unionWith(sum);
+				if((DB.size() - preDelta) != 0){
+					out << sum.toString();
+				}
 
 			}
 			passes++;
 		}while(!((DB.size() - preDelta) == 0));
 
-		out << "Converged after " << passes << " through the Rules." << endl;
+		out << "Converged after " << passes << " passes through the Rules." << endl;
+		// funny note: i kept forgetting to add "passes" even though i noticed it several times
+		// because the variable is also called passes.  this isn't the first time
+		// i've had this problem.  tell john carmack idk
+		
+		out << endl;
+		for (map<string,Relation>::iterator i = DB.relations.begin(); i != DB.relations.end(); i++){
+			out << i->second.Name << "\n";
+			
+			out << i->second.toString();
+		}
+
 		
 		out << "\nQuery Evaluation\n\n";
 		for (auto p : DProg.Queries){
