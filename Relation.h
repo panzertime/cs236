@@ -40,10 +40,13 @@ Scheme scheme;
 	}
 
 	bool joinable(const Tuple & t1, const Tuple & t2, Scheme & s1, Scheme & s2){
-		for(unsigned outer = 0; outer < t1.size(); outer++){
-			for(unsigned inner = 0; inner < t2.size(); inner++){
-				if(s1.attrs[outer] == s2.attrs[inner] && t1[outer] != t2[inner])
-					return false;
+		for(unsigned first = 0; first < t1.size(); first++){
+			for(unsigned second = 0; second < t2.size(); second++){
+				if(s1.attrs[first] == s2.attrs[second]){
+					if(t1[first] != t2[second]){
+						return false;
+					}
+				}
 			}
 		}
 		return true;
@@ -145,7 +148,8 @@ Scheme scheme;
 
 		for(Tuple t : tuples){
 			Tuple n;
-			for(auto index : order){
+			for(int at = 0; at < (int) order.size(); at++){
+				int index = order[at];
 				n.push_back(t[index]);
 			}
 
@@ -180,7 +184,8 @@ Scheme scheme;
 				those two fixed it.
 				Man, C++ += is a weird beast;
 			*/
-					r += t[i] += "' ";
+					r += t[i];
+					r += "' ";
 				}
 //				if(scheme.attrs.empty()){
 //					r += "EMPTY SCHEME";
@@ -188,8 +193,44 @@ Scheme scheme;
 				r += "\n";
 			}
 		}
+		else{
+			r+="\n";
+		}
 		return r;
 	}
+
+	string toString(Relation & with){
+		string r;
+//		r += Name += "\n";
+		if(!tuples.empty()){
+			for (Tuple t : tuples){
+				if(count(with.tuples.begin(), with.tuples.end(), t) == 0){ 
+					// prints difference of relations by 
+					// skipping tuples in "with"
+				r += "  ";
+				for (int i = 0; i < (int) scheme.attrs.size(); i++){
+					r += scheme.attrs[i];
+					r += "='";
+			/* 	Somehow this line:
+					r += scheme.attrs[i] += "='";
+				was outputting ridiculous lines where
+				the number of =' was equal to the i+1.
+				NO IDEA how or why, but separating
+				those two fixed it.
+				Man, C++ += is a weird beast;
+			*/
+					r += t[i];
+					r += "' ";
+				}
+//				if(scheme.attrs.empty()){
+//					r += "EMPTY SCHEME";
+//				}
+				r += "\n";
+			}}
+		}
+		return r;
+	}
+
 };
 
 #endif

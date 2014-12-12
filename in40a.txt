@@ -3,11 +3,14 @@ Schemes:
   csg(C,S,G)
   cn(C,N)
   ncg(N,C,G)
+  qnz(a)
+  znq(b)
 
 Facts:
   snap('12345','C. Brown','12 Apple St.','555-1234').
   snap('22222','P. Patty','56 Grape Blvd','555-9999').
   snap('33333','Snoopy','12 Apple St.','555-1234').
+  snap('77','Failure','Yourtown.','234-1234').
   csg('CS101','12345','A').
   csg('CS101','22222','B').
   csg('CS101','33333','C').

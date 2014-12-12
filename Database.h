@@ -53,10 +53,21 @@ public:
 		s += "Fact Evaluation\n\n";
 		for (map<string,Relation>::iterator i = relations.begin(); i != relations.end(); i++){
 			s += i->second.Name += "\n";
-			s += i->second.toString();
+			s += i->second.toString() += "\n";
 		}
 		return s;
 	}
+
+	string printRelations(){
+		string s;
+		for (map<string,Relation>::iterator i = relations.begin(); i != relations.end(); i++){
+			s += i->second.Name; // += "\n";
+			s += i->second.toString() += "\n";
+		}
+		return s;
+	}
+
+
 
 	void addRelation(Predicate & src){
 		relations[src.label] = Relation(src);
@@ -153,7 +164,7 @@ public:
 		renamed = projected.rename(vars);
 		
 		if (src.tuples.size() == 0){
-			return ("No\n");
+			return ("No\n\n");
 		}
 		else {
 			string r;
@@ -167,6 +178,7 @@ public:
 			r += projected.toString();
 			r += "rename\n";
 			r += renamed.toString();
+			r += "\n";
 
 			return r;
 		}

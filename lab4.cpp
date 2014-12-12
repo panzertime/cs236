@@ -11,9 +11,39 @@
 #include "Parser.h"
 #include "Database.h"
 #include "Predicate.h"
+#include "Parameter.h"
 #include <string>
 #include <vector>
 #include <fstream>
+
+vector<int> numbers(vector<Parameter> & parameters, vector<string> & attrs){
+//				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){
+//					// if param is var, then add param # to cols
+//					// somehow avoid doubles
+//			
+//					if(DProg.Rules[i].head.params[z].ID)
+//						cols.push_back(z);
+//					for (int k = 0; k < z; k++){
+//						if(DProg.Rules[i].head.params[z].value == DProg.Rules[i].head.params[k].value)
+//							cols.pop_back();
+//					}	// this is checking if i've already added that var,
+//						// then deleting it from end if I have.
+//						// "slow" but should work well.
+//				}
+				// redo column generation
+				// take next attr in head, find column in joined, then push_back
+	vector<int> cols;
+	for (int z = 0; z < (int) parameters.size(); z++){
+
+		for (int k = 0; k < (int) attrs.size(); k++){
+			if (parameters[z].value == attrs[k]){
+				cols.push_back(k);
+			}
+		}
+	}
+	
+	return cols;
+}
 
 int main(int argc, const char** argv){
 	
@@ -31,7 +61,7 @@ int main(int argc, const char** argv){
 		DProg.createDomain();
 		Database DB = Database(DProg);
 		out << DB.toString();
-		out << "\nRule Evaluation\n";
+		out << "Rule Evaluation\n\n";
 		unsigned passes = 0;
 		int preDelta;
 		do{
@@ -57,31 +87,7 @@ int main(int argc, const char** argv){
 //	}
 //	cout << endl;
 //	}
-				vector<int> cols;
-//				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){
-//					// if param is var, then add param # to cols
-//					// somehow avoid doubles
-//			
-//					if(DProg.Rules[i].head.params[z].ID)
-//						cols.push_back(z);
-//					for (int k = 0; k < z; k++){
-//						if(DProg.Rules[i].head.params[z].value == DProg.Rules[i].head.params[k].value)
-//							cols.pop_back();
-//					}	// this is checking if i've already added that var,
-//						// then deleting it from end if I have.
-//						// "slow" but should work well.
-//				}
-				// redo column generation
-				// take next attr in head, find column in joined, then push_back
-				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){
-					if (DProg.Rules[i].head.params[z].ID){
-						for (int k = 0; k < (int) sum.scheme.attrs.size(); k++){
-							if (DProg.Rules[i].head.params[z].value == sum.scheme.attrs[k]){
-								cols.push_back(k);
-							}
-						}
-					}
-				}
+				vector<int> cols = numbers(DProg.Rules[i].head.params, sum.scheme.attrs);
 					
 //	cout << "Columns: " << endl;
 //	for (auto things : cols){
@@ -90,37 +96,36 @@ int main(int argc, const char** argv){
 				sum = sum.project(cols);
 //	cout << "Projected vector: " << endl;
 //	cout << sum.toString();
-				// then rename to match head.scheme
+				// then rename to match scheme in DB already
+				// do like DProg.Rules[i].head.label
 				vector<string> vars;
-				for (int z = 0; z < (int) DProg.Rules[i].head.params.size(); z++){ 
-					vars.push_back(DProg.Rules[i].head.params[z].value);
+				for (int z = 0; z < (int) DB.relations[DProg.Rules[i].head.label].scheme.attrs.size(); z++){ 
+					vars.push_back(DB.relations[DProg.Rules[i].head.label].scheme.attrs[z]);
 				}
 				sum = sum.rename(vars);
 				// at this point "sum" should be the fully projected and stuff
 				// and ready to union with the stuff in the DB
+				out << sum.toString(DB.relations[DProg.Rules[i].head.label]);
 				DB.relations[DProg.Rules[i].head.label].unionWith(sum);
-				if((DB.size() - preDelta) != 0){
-					out << sum.toString();
-				}
+				//and now print... but how?
+				//check each tuple?  probably all we can do.
 
 			}
 			passes++;
 		}while(!((DB.size() - preDelta) == 0));
-
+		
+		out << endl;
 		out << "Converged after " << passes << " passes through the Rules." << endl;
 		// funny note: i kept forgetting to add "passes" even though i noticed it several times
 		// because the variable is also called passes.  this isn't the first time
 		// i've had this problem.  tell john carmack idk
 		
 		out << endl;
-		for (map<string,Relation>::iterator i = DB.relations.begin(); i != DB.relations.end(); i++){
-			out << i->second.Name << "\n";
-			
-			out << i->second.toString();
-		}
+		out << DB.printRelations();
+
 
 		
-		out << "\nQuery Evaluation\n\n";
+		out << "Query Evaluation\n\n";
 		for (auto p : DProg.Queries){
 			out << p.toString() << "? ";
 			out << DB.queryEval(p);
@@ -141,3 +146,5 @@ int main(int argc, const char** argv){
 	in.close();
 	out.close();
 }
+
+
