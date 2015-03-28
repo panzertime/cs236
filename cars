@@ -1,0 +1,22 @@
+Schemes:
+omy(o,m,y)
+or(o,r)
+myr(m,y,r)
+
+Facts:
+omy('Gordon B. Hinckley', 'Buick LeSabre', 1995).
+omy('Ronald McDonald', 'Mitsubishi Gallant', 2008).
+omy('Bill Clinton', 'Maserati Khamsin', 1973).
+or('Gordon B. Hinckley', '38002').
+or('Ronald McDonald', '19287').
+or('Bill Clinton', '38016').
+
+Rules:
+myr(m,y,r):-omy(O,m,y),or(O,r).
+
+Queries:
+myr(Model, Year, '38002')?
+or(Owner, '38002')?
+myr(Model, Year, '38016')?
+or(Owner, '38016')?
+
