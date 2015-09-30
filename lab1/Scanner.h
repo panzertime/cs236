@@ -25,8 +25,35 @@ class Scanner {
 	unsigned Total;
 	vector<Token> Stowage;
 	ifstream & src;
+
+	char lineComment(char init){
+		string words;
+		words += '#';
+
+		// what if comment is nothing but #\n?
+
+		// fix up comment machinery, clean up code, test for leaks
+		// and we should be good.
+		
+		while(init != '\n' && init != EOF){
+			words += init;
+			if(init == '\n'){
+				Stowage.push_back(Token(words, Total, COMMENT));
+			}
+			if(init == EOF){
+				Token undef = Token(words, Total, UNDEFINED);
+				Stowage.push_back(undef);
+				Stowage.push_back(Token("", 
+						Total, 
+						DUPE_EOF));	
+			}
+			init = src.get();
+		}
+		return init;
+	}
+
 	
-	char skipSkippable(char init){
+	char skipSkippable(char init){  // COMPLEX: REVISE DOWN BY NINE.
 		//skip whitespace
 		//skip comments
 		//count linenumbers
@@ -38,10 +65,57 @@ class Scanner {
 			//keeps going until character is not w.s.
 		}
 		if(init == '#'){
-			//continue to end of line
-			while(init != '\n'){
-				init = src.get();								
+			unsigned innerLines = 0;
+			string words;
+			words += init;
+			init = src.get();
+			// block comment: continue until |#
+			if(init == '|'){
+				words += init;
+				while(true){
+					init = src.get();
+					if(init == '\n'){
+						innerLines++;
+					}
+					if(init == EOF){
+						Token undef = Token(words, Total, UNDEFINED);
+						Stowage.push_back(undef);
+						Stowage.push_back(Token("", 
+									Total + innerLines - 1, 
+									DUPE_EOF));
+						error = 0;
+						return init;
+					}
+					if(init == '|'){
+						words += init;
+						init = src.get();
+						if(init == '#'){
+							// block comment complete
+							words += init;
+							init = src.get();
+							// so that we start with new comment
+							// instead of recycling current '#'
+							cout << "words: " << words << endl;
+							break;
+						}
+						words += init;
+					}
+					else {
+						words += init;
+					}
+				}
+				Stowage.push_back(Token(words, Total, COMMENT));
+				Total += innerLines;
 			}
+				
+
+			
+			//continue to end of line or file
+			else {
+				init = lineComment(init);
+			}
+
+
 			init = skipSkippable(init);
 			//to get all comments in a row
 			//as well as the newline
@@ -57,61 +131,121 @@ class Scanner {
 	return init;
 	}		
 	
-	char scanID(char init){
+	void catchKeywords(string words){
+		if(words == "Schemes"){
+			Stowage.push_back(Token(words,Total,SCHEMES));
+		}
+		else if(words == "Facts"){
+			Stowage.push_back(Token(words,Total,FACTS));
+		}
+		else if(words == "Rules"){
+			Stowage.push_back(Token(words,Total,RULES));
+		}
+		else if(words == "Queries"){
+			Stowage.push_back(Token(words,Total,QUERIES));
+		}
+		else if(words.size() > 0 && isalpha(words[0])){
+			Stowage.push_back(Token(words,Total,ID));
+		}
+	}
+
+	char scanID(char init){  
 		string words;
-		while(isalnum(init) ){
+		// if a non-alnum init makes its way in here,
+		// it's because it's already been thru the main
+		// token loop and been rejected
+		if(!isalnum(init)){
+			words += init;
+			Token undef = Token(words, Total,UNDEFINED);
+			Stowage.push_back(undef);
+			return src.get();
+			// always return the last char scanned!  main
+			// loop expects that.  but if we return what
+			// we were passed, then we end up with a 
+			// forever loop.
+		}
+
+
+		// problem I'm running into here is that
+		// functionality is bleeding between scanID() and getNext().
+		// I need to review where exactly init is supposed to
+		// be at each stage
+		
+
+		// aha!  what's happening is that i'm going all the way to the
+		// space, whereas originally I just took in alnums,
+		// therefore the next char would be a : rather than a space and 
+		// the last one being :, making the string Queries: and also 
+		// triggering an UNDEF.
+		// So I should go to the first non-alnum (spaces are non-alnum),
+		// and if any ID starts with a non-alnum then I make
+		// an UNDEF.  in the inner block if I hit a non-alnum, blah
+		// blah
+
+		while(isalnum(init)){
 			words += init;
 			init = src.get();
 			//possible problem source...
 			//the order of the .get() can be an issue
-
 		}
 //cout << "adding ID at: " << Total << endl;
 		//we now have an ID!
-		if(words == "Schemes"){
-			Stowage.push_back(Token(words,Total,SCHEMES));
-			return init;
-		}
-		else if(words == "Facts"){
-			Stowage.push_back(Token(words,Total,FACTS));
-			return init;
-		}
-		else if(words == "Rules"){
-			Stowage.push_back(Token(words,Total,RULES));
-			return init;
-		}
-		else if(words == "Queries"){
-			Stowage.push_back(Token(words,Total,QUERIES));
-			return init;
-		}
-		else if(words.size() > 0 && isalpha(words[0])){
-			Stowage.push_back(Token(words,Total,ID));
-			return init;
-		}
+		
+		catchKeywords(words);
 
-		error = 1;
 		return init;
+		// always returns the last char scanned, even
+		// if "illegal," so that it goes back into the 
+		// main token loop and gets caught if it's good.
 	}	
 	
 	char scanString(char init){
 		string words;
-		while (init != '\''){
+		words += '\'';
+		// original design ignored all the apostrophes,
+		// now we keep them.
+		unsigned innerLines = 0;
+		while (true){
 			words += init;
+			if(init == '\''){
+				// check if this is escaped, if so continue
+				init = src.get();
+				if (init == '\''){
+					words += '\'';
+				}
+				else {
+					// string is complete
+					break;
+				}
+			}
 			init = src.get();
-			if(init == '\n' || init == EOF){
-				error = 1;
+			if(init == EOF){
+				// Strings containing EOF are undefined
+				// Create both UNDEF and EOF tokens
+				Token undef = Token(words, Total, UNDEFINED);
+				Stowage.push_back(undef);
+				Stowage.push_back(Token("", Total + innerLines - 1, DUPE_EOF));
+				error = 0;
 				return init;
 			}
-		}// while (init != '\'');
+			if(init == '\n'){
+				// we keep a separate count of how long this 
+				// string is because the token's line
+				// is expected to be where it starts, not ends
+				innerLines++;
+			}
+
+		}
 		Stowage.push_back(Token(words,Total,STRING));
+		Total += innerLines;
 		// no extra src.get() because that do-while does it for us
 		// otherwise we end up doing two strings :P
-		return src.get();
+		return init;
 	}
 
 	void getNext(){
 		// read some chars, put some Tokens
-	
+		// (top level of parsing mechanics)
 		char c = src.get();
 		// weirdly, .get() keeps going past EOF
 		// thus it is wonderful that I happened
@@ -159,6 +293,7 @@ class Scanner {
 					c = scanString(c);
 					break;
 				case EOF :
+					Stowage.push_back(Token("",(Total - 1),DUPE_EOF));
 					return;
 				
 				default :
@@ -167,7 +302,9 @@ class Scanner {
 					break;
 			}
 			if(error){
-				return;
+				error = 0;
+			//	return;
+				// do not need to return anymore, apparently
 			}
 		} // while (src.good());		
 	}

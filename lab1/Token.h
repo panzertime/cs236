@@ -45,14 +45,21 @@ public:
 		kinds[10] = "QUERIES";
 		kinds[11] = "ID";
 		kinds[12] = "STRING";
+		kinds[13] = "MULTIPLY";
+		kinds[14] = "ADD";
+		kinds[15] = "COMMENT";
+		kinds[16] = "UNDEFINED";
+		kinds[17] = "EOF";
 	}
 
 	virtual ~Token(){
 	}
 	
 	void print(ofstream & out){
-	out << "(" << kinds[tokenType] << ",\"" << Value << "\"," << Line
-	<< ")" << endl;
+		out << "(" << kinds[tokenType] 
+				<< ",\"" << Value 
+				<< "\"," << Line
+				<< ")" << endl;
 	}
 
 };
