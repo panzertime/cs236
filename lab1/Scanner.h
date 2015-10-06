@@ -31,29 +31,80 @@ class Scanner {
 		words += '#';
 
 		// what if comment is nothing but #\n?
+		// then it's an empty comment.
 
-		// fix up comment machinery, clean up code, test for leaks
-		// and we should be good.
+
+		// I think the thing to do in that case, is have just an empty comment
+		// '#' and return \n back into skipSkippable to deal with
 		
-		while(init != '\n' && init != EOF){
-			words += init;
+		while(true){
 			if(init == '\n'){
 				Stowage.push_back(Token(words, Total, COMMENT));
+				Total++;
+				return src.get();
 			}
 			if(init == EOF){
 				Token undef = Token(words, Total, UNDEFINED);
 				Stowage.push_back(undef);
 				Stowage.push_back(Token("", 
 						Total, 
-						DUPE_EOF));	
+						DUPE_EOF));
+				return init;
+				// must return EOF so that it can fall all the
+				// way back to the EOF token, exit gracefully
 			}
+			words += init;
 			init = src.get();
 		}
 		return init;
 	}
-
 	
-	char skipSkippable(char init){  // COMPLEX: REVISE DOWN BY NINE.
+	char blockComment(char init){
+		unsigned innerLines = 0;
+		string words;
+		words += '#';
+		words += '|';
+		words += init;
+		cout << "block!" << endl;
+		while(true){
+			cout << words << endl;
+			init = src.get();
+			if(init == '\n'){
+			innerLines++;
+			}
+			if(init == EOF){
+				Token undef = Token(words, Total, UNDEFINED);
+				Stowage.push_back(undef);
+				Stowage.push_back(Token("", 
+							Total + innerLines - 1, 
+							DUPE_EOF));
+				error = 0;
+				return init;
+				// must return EOF in order to get EOF token, exit gracefully
+			}
+			if(init == '|'){
+				words += '|';
+				init = src.get();
+				if(init == '#'){
+					// block comment complete
+					Stowage.push_back(Token(words, Total, COMMENT));
+					Total += innerLines;
+					return src.get();
+					// so that we start with new comment
+					// instead of recycling current '#'
+				}
+				words += init;
+				}
+			else {
+				words += init;
+			}
+		}
+		return init;
+	}
+	
+
+
+	char skipSkippable(char init){  
 		//skip whitespace
 		//skip comments
 		//count linenumbers
@@ -65,54 +116,17 @@ class Scanner {
 			//keeps going until character is not w.s.
 		}
 		if(init == '#'){
-			unsigned innerLines = 0;
 			string words;
-			words += init;
 			init = src.get();
 			// block comment: continue until |#
 			if(init == '|'){
-				words += init;
-				while(true){
-					init = src.get();
-					if(init == '\n'){
-						innerLines++;
-					}
-					if(init == EOF){
-						Token undef = Token(words, Total, UNDEFINED);
-						Stowage.push_back(undef);
-						Stowage.push_back(Token("", 
-									Total + innerLines - 1, 
-									DUPE_EOF));
-						error = 0;
-						return init;
-					}
-					if(init == '|'){
-						words += init;
-						init = src.get();
-						if(init == '#'){
-							// block comment complete
-							words += init;
-							init = src.get();
-							// so that we start with new comment
-							// instead of recycling current '#'
-							cout << "words: " << words << endl;
-							break;
-						}
-						words += init;
-					}
-					else {
-						words += init;
-					}
-				}
-				Stowage.push_back(Token(words, Total, COMMENT));
-				Total += innerLines;
+				init = blockComment(src.get());	
+				// returns newline or EOF
 			}
-				
-
-			
 			//continue to end of line or file
 			else {
 				init = lineComment(init);
+				// returns newline or EOF
 			}
 
 
@@ -128,7 +142,7 @@ class Scanner {
 			//it, but i forgot to carry thru
 			//recursion
 		}
-	return init;
+		return init;
 	}		
 	
 	void catchKeywords(string words){
