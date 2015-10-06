@@ -65,9 +65,7 @@ class Scanner {
 		words += '#';
 		words += '|';
 		words += init;
-		cout << "block!" << endl;
 		while(true){
-			cout << words << endl;
 			init = src.get();
 			if(init == '\n'){
 			innerLines++;
@@ -220,20 +218,30 @@ class Scanner {
 		// now we keep them.
 		unsigned innerLines = 0;
 		while (true){
-			words += init;
 			if(init == '\''){
 				// check if this is escaped, if so continue
 				init = src.get();
 				if (init == '\''){
 					words += '\'';
+					words += '\'';
+					init = src.get();
 				}
 				else {
-					// string is complete
-					break;
+					words += '\'';
+					Stowage.push_back(Token(words,Total,STRING));
+					Total += innerLines;
+					return init;
 				}
 			}
-			init = src.get();
-			if(init == EOF){
+			if(init == '\n'){
+				// we keep a separate count of how long this 
+				// string is because the token's line
+				// is expected to be where it starts, not ends
+				innerLines++;
+				words += init;
+				init = src.get();		
+			}
+			else if(init == EOF){
 				// Strings containing EOF are undefined
 				// Create both UNDEF and EOF tokens
 				Token undef = Token(words, Total, UNDEFINED);
@@ -242,16 +250,12 @@ class Scanner {
 				error = 0;
 				return init;
 			}
-			if(init == '\n'){
-				// we keep a separate count of how long this 
-				// string is because the token's line
-				// is expected to be where it starts, not ends
-				innerLines++;
+			else {
+				words += init;
+				init = src.get();
 			}
 
 		}
-		Stowage.push_back(Token(words,Total,STRING));
-		Total += innerLines;
 		// no extra src.get() because that do-while does it for us
 		// otherwise we end up doing two strings :P
 		return init;
