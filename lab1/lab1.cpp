@@ -1,7 +1,9 @@
 /*	
 *
 *	Scanner for Datalog language - part one of
-*	Datalog REPL
+*	Datalog Interpreter
+*
+*	(C) RT Hatfield, 2014, 2015
 *
 */
 
@@ -12,21 +14,19 @@
 
 int main(int argc, const char** argv){
 	
-	ifstream in;
-	in.open(argv[1]);
-	ofstream out;
-	out.open(argv[2]);
+	ifstream inFile;
+	inFile.open(argv[1]);
 
-	Scanner s(in);
-	unsigned err = s.scan();
-	vector<Token> v = s.getTokens();
-	for(auto t : v){
-		t.print(out);
+	Scanner source(inFile);
+	source.scan();
+	vector<Token> tokenVector = source.getTokens();
+
+	for(auto token : tokenVector){
+		token.print(cout);
 	}
-	if (err)
-		out << "Input Error on line " << err << endl;
-	in.close();
-	if (!err)
-		out << "Total Tokens = " << v.size();
-	out.close();
+
+	cout << "Total Tokens = " << tokenVector.size();
+	
+	inFile.close();
+
 }

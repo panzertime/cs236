@@ -55,7 +55,7 @@ public:
 	virtual ~Token(){
 	}
 	
-	void print(ofstream & out){
+	void print(ostream & out){
 		out << "(" << kinds[tokenType] 
 				<< ",\"" << Value 
 				<< "\"," << Line
