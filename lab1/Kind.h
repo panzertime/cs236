@@ -1,7 +1,3 @@
-
-
-
-
 enum Kind {
 		COMMA,
 		PERIOD,
