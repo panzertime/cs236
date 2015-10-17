@@ -161,6 +161,9 @@ class Scanner {
 		else if(words.size() > 0 && isalpha(words[0])){
 			Stowage.push_back(Token(words,Total,ID));
 		}
+		else {
+			Stowage.push_back(Token(words,Total, UNDEFINED));
+		}
 	}
 
 	char scanID(char init){  
@@ -168,7 +171,7 @@ class Scanner {
 		// if a non-alnum init makes its way in here,
 		// it's because it's already been thru the getNext
 		// token loop and been rejected
-		if(!isalnum(init)){
+		if(!isalpha(init)){
 			words += init;
 			Token undef = Token(words, Total, UNDEFINED);
 			Stowage.push_back(undef);
@@ -231,7 +234,8 @@ class Scanner {
 				Token undef = Token(words, Total, UNDEFINED);
 				Stowage.push_back(undef);
 				Total += innerLines;
-				return EOF;
+				Stowage.push_back(Token("", Total, DUPE_EOF));
+				return init;
 			}
 			else {
 				words += init;
@@ -296,15 +300,17 @@ class Scanner {
 					c = src.get();
 					c = scanString(c);
 					break;
-				case EOF :
-					Stowage.push_back(Token("", Total, DUPE_EOF));
-					return;
 				case '*' :
 					Stowage.push_back(Token("*", Total, MULTIPLY));
 					c = src.get();
+					break;
 				case '+' :
 					Stowage.push_back(Token("+", Total, ADD));
 					c = src.get();
+					break;
+				case EOF :
+					Stowage.push_back(Token("", Total, DUPE_EOF));
+					return;
 				default :
 					c = scanID(c);
 					break;
@@ -328,6 +334,9 @@ public:
 	}
 
 	vector<Token> getTokens(){
+		if(Stowage.size() == 0){
+			Stowage.push_back(Token("", Total, DUPE_EOF));
+		}
 		return Stowage;
 	}
 
