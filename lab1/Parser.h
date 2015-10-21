@@ -31,9 +31,6 @@ public:
 	}
 
 	void match(Kind k){
-			cout << "expecting " << k << endl;
-			cout << "got :" ; tokens[at].print(cout); 
-
 		if(tokens[at].tokenType == k) {
 			at++;
 		}

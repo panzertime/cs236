@@ -32,16 +32,29 @@ vector<Parameter> params;
 		string s;
 		s += label;
 		s += "(";
-		for (auto t : params){
-		//	if (t.expr == 1){
-			//	t = (Expression) t;
+		for (int i = 0; i < params.size(); i++) {
+			s += (&(params[i]))->toString();
+			s += ",";
+		}
+
+/**		for (auto t : params){
+			Parameter* paramPtr;
+			Expression* exprPtr;
+			if (t.expr == 1){
+				exprPtr = &t;
+				s += exprPtr->toString();
+			}
+			else {
+				paramPtr = &t;
+				s += paramPtr->toString();
+			}
 		//	s += "EXPRESSION ";
 		//	}
 		//	else {
-			s += t.toString();
+		//	s += t.toString();
 			s += ",";
-		//}
-		}
+		//}    **/
+		
 		s.pop_back();
 		s += ")";
 	//	s += "\n";

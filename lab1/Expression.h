@@ -19,10 +19,15 @@ public:
 		left = leftParam;
 		oper = operatorType;
 		right = rightParam;
+		value = toString();
+		// the previous is a total C++-style hack.  
+		// here's what Bjarne Stroustrup has to say:
+		// https://isocpp.org/blog/2014/12/myths-1
+		//     i hate this language
 	}
 
 	string toString(){
-		return "expression ";
+	//	return "expression ";
 		if(oper == ADD)
 			return ( "(" + left.toString() + "+" + right.toString() + ")" );
 		else

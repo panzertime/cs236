@@ -48,16 +48,17 @@ public:
 	void createDomain(){
 		for(auto p : Facts){
 			for(auto t : p.params){
-				if(!t.ID)
+				if(t.inDomain())
 					Domain.insert(t.value);
 			}
 		}
-		for(auto p : Queries){
-			for(auto t : p.params){
-				if(!t.ID)
-					Domain.insert(t.value);
-			}
-		}
+	//	spec change: now excluding Queries from domain
+	//	for(auto p : Queries){
+	//		for(auto t : p.params){
+	//			if(!t.ID)
+	//				Domain.insert(t.value);
+	//		}
+	//	}
 	//	Domain.sort();
 	}
 
