@@ -104,7 +104,7 @@ Scheme scheme;
 				r += "  ";
 				for (int i = 0; i < (int) scheme.attrs.size(); i++){
 					r += scheme.attrs[i];
-					r += "='";
+					r += "=";
 			/* 	Somehow this line:
 					r += scheme.attrs[i] += "='";
 				was outputting ridiculous lines where
@@ -113,11 +113,11 @@ Scheme scheme;
 				those two fixed it.
 				Man, C++ += is a weird beast;
 			*/
-					r += t[i] += "' ";
+					r += t[i] += " ";
 				}
-//				if(scheme.attrs.empty()){
-//					r += "EMPTY SCHEME";
-//				}
+				if(scheme.attrs.empty()){
+					return "";
+				}
 				r += "\n";
 			}
 		}

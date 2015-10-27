@@ -117,7 +117,6 @@ public:
 		//	r += projected.toString();
 		//	r += "rename\n";
 			r += renamed.toString();
-
 			return r;
 		}
 
