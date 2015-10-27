@@ -1,0 +1,28 @@
+OK, we're at the point where the tricky stuff seems to be done.  
+
+Just finishing up the core features and testing edge cases.
+
+Need to do scanners for:
+
+	: and :-
+	strings
+	IDs
+
+For : and :- :
+	Just ask if the next character is a -, I guess.  Otherwise it'll be WS
+	and ignorable.  Push to vector using a case or if-else.
+
+For strings:
+	Keep going until you get the last ' , adding each new src.get() to a string.
+	Then push that string into the vector - might have to add a ' if you do a 
+	while(c != '\'').  Even could try a do-while to catch the first ' easily.
+
+For IDs:
+	If it's not a number, it's an ID.  Get until the next WS and test for keywords,
+	then add to vector.
+
+
+
+* NEED TO CHECK FOR NEWLINES IN STRINGS
+* GENERAL ERROR CHECK CRAP
+
