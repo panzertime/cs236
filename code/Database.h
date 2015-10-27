@@ -82,9 +82,10 @@ public:
 			// if param is var, then add param # to cols
 			// somehow avoid doubles
 			
-			if(q.params[i].ID)
-				cols.push_back(i);
-			for (int k = 0; k < i; k++){
+			if(q.params[i].ID){
+//cout << "Param " << i << " is variable" << endl;
+				cols.push_back(i);}
+			for (int k = 0; k < i && k < cols.size(); k++){
 				if(q.params[i].value == q.params[k].value)
 					cols.pop_back();
 			}	// this is checking if i've already added that var,

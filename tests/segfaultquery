@@ -1,0 +1,15 @@
+Schemes: 
+	ab(a,b)
+Facts:
+	ab('boss','same').
+	ab('same','diff').
+	ab('diff','same').
+	ab('same','same').
+Rules:
+Queries:
+	ab(a,a)?
+	ab(a,b)?
+	ab('same','diff')?
+	ab('not','even')?
+	ab('same','same')?
+

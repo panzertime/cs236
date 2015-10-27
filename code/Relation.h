@@ -41,8 +41,9 @@ Scheme scheme;
 	Relation select(int & pos, string & val){
 		Relation r = Relation(scheme);
 		for(Tuple t : tuples){
-			if (t[pos] == val)				
-				r.add(t);
+			if (t[pos] == val){
+//cout << "ADDING SELECTED BY VAL MATCH TO NEW TUPLE" << endl;
+				r.add(t);}
 		}
 		return r;
 	}
@@ -50,8 +51,9 @@ Scheme scheme;
 	Relation select(int & pos1, int & pos2){
 		Relation r = Relation(scheme);
 		for(Tuple t : tuples){
-			if (t[pos1] == t[pos2])
-				r.add(t);
+			if (t[pos1] == t[pos2]){
+//cout << "ADDING SELECTED BY TUPLE MATCH TO NEW TUPLE" << endl;
+				r.add(t);}
 		}
 		return r;
 	}
@@ -69,6 +71,7 @@ Scheme scheme;
 		
 		vector<string> attrs;
 		for(int i = 0; i < (int) order.size(); i++){
+//cout << "PROJECTION: MAKING SCHEME" << endl;
 			int index = order[i];
 			attrs.push_back(scheme.attrs[index]);
 		}
@@ -78,7 +81,10 @@ Scheme scheme;
 
 		for(Tuple t : tuples){
 			Tuple n;
+//cout << "PROJECTION: USING ORDER: " << (int) order.size() << endl;
+//cout << "PROJECTION: USING TUPLE: " << n.size() << endl;
 			for(auto index : order){
+//cout << "PROJECTION: ADDING TUPLE: " << t[index] << endl;
 				n.push_back(t[index]);
 			}
 
@@ -112,8 +118,11 @@ Scheme scheme;
 				NO IDEA how or why, but separating
 				those two fixed it.
 				Man, C++ += is a weird beast;
-			*/
-					r += t[i] += " ";
+			*/		
+					r += t[i];
+					if(i < t.size() - 1){
+						r += ", ";
+					}
 				}
 				if(scheme.attrs.empty()){
 					return "";
