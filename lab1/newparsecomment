@@ -1,3 +1,6 @@
+# comment
+#| block comment |#
+
 Schemes:
   snap(S,N,A,P)
 

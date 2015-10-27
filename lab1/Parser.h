@@ -20,7 +20,7 @@ private:
 	Predicate currPred;
 	Predicate noP;
 	Rule currRule;
-	Rule noR;
+	Rule noR;				
 
 public:
 	Parser(vector<Token> & scanned):tokens(scanned){
@@ -44,11 +44,11 @@ public:
 
 	void vacuum(vector<Token>& tokenList){
 		for(int i = 0; i < tokenList.size(); i++){
-			Token item = tokens[i];
-			if(item.tokenType == COMMENT ||
-					item.tokenType == UNDEFINED ||
-					item.tokenType == DUPE_EOF){
-				tokenList.erase(tokenList.begin() + i);
+			if(tokens[i].tokenType == COMMENT ||
+					tokens[i].tokenType == UNDEFINED ||
+					tokens[i].tokenType == DUPE_EOF){
+					tokenList.erase(tokenList.begin() + i);
+				i--;
 			}
 		}
 	}
@@ -80,7 +80,7 @@ private:  	// no idea if this works, we'll see i guess
 	}
 
 	void parseScheme(){
-		parsePredicate();
+		parseSPredicate();
 		DP.addScheme(currPred);
 		currPred = noP;
 		// erase currPred ?
@@ -97,6 +97,47 @@ private:  	// no idea if this works, we'll see i guess
 		match(RIGHT_PAREN);
 	}
 
+	void parseFPredicate(){
+		match(ID);
+		currPred.label=tokens[at - 1].Value;
+		match(LEFT_PAREN);
+		parseFParamList();
+		match(RIGHT_PAREN);
+	}
+
+	void parseSPredicate(){
+		match(ID);
+		currPred.label=tokens[at - 1].Value;
+		match(LEFT_PAREN);
+		parseSParamList();
+		match(RIGHT_PAREN);
+	}
+
+	void parseFParamList(){
+		/* check for either just the param, or more lists
+		 * then */
+
+		currPred.addParam(parseFParam());
+		if(tokens[at].tokenType == COMMA){
+			match(COMMA);
+			parseFParamList();
+		}
+		//might need extra increment here, idk
+	}
+
+	void parseSParamList(){
+		/* check for either just the param, or more lists
+		 * then */
+
+		currPred.addParam(parseSParam());
+		if(tokens[at].tokenType == COMMA){
+			match(COMMA);
+			parseSParamList();
+		}
+		//might need extra increment here, idk
+	}
+
+
 	void parseParamList(){
 		/* check for either just the param, or more lists
 		 * then */
@@ -108,6 +149,23 @@ private:  	// no idea if this works, we'll see i guess
 		}
 		//might need extra increment here, idk
 	}
+
+	Parameter parseSParam(){
+		// ID because schemes
+		Parameter p;
+		match(ID);
+		p.addName(tokens[at-1].Value);
+		return p;
+	}
+
+	Parameter parseFParam(){
+		// String because fact
+		Parameter p;
+		match(STRING);
+		p.addValue(tokens[at-1].Value);
+		return p;
+	}
+
 
 	Parameter parseParam(){
 		// either string or ID
@@ -152,7 +210,7 @@ private:  	// no idea if this works, we'll see i guess
 	}
 
 	void parseFact(){
-		parsePredicate();
+		parseFPredicate();
 		match(PERIOD);
 		DP.addFact(currPred);
 		currPred = noP;

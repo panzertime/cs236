@@ -79,7 +79,7 @@ public:
 		for(auto p : Facts){
 			s += "  ";
 			s += p.toString();
-			s += "\n";
+			s += ".\n";
 		}
 		s += "Rules(";
 		s += to_string(Rules.size());
@@ -87,7 +87,7 @@ public:
 		for(auto r : Rules){
 			s += "  ";
 			s += r.toString();
-			s += "\n";
+			s += ".\n";
 		}
 		s += "Queries(";
 		s += to_string(Queries.size());
@@ -95,7 +95,7 @@ public:
 		for(auto p : Queries){
 			s += "  ";
 			s += p.toString();
-			s += "\n";
+			s += "?\n";
 		}
 		s += "Domain(";
 		s += to_string(Domain.size());
