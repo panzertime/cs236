@@ -1,0 +1,13 @@
+Schemes:
+	Q(a,b)
+	Z(r,s)
+	D(f,x)
+
+Facts:
+	Q('1','2').
+	Z('3','4').
+
+Rules:
+	D(F,X):-Q(m,n),Z(m,n).
+
+Queries:
