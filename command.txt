@@ -1,1 +1,0 @@
-./compile; clear; clear; clear; ./lab4 in40.txt out; cat out 
