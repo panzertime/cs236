@@ -1,8 +1,3 @@
-#ifndef KIND
-#define KIND
-
-
-
 enum Kind {
 		COMMA,
 		PERIOD,
@@ -16,7 +11,11 @@ enum Kind {
 		RULES,
 		QUERIES,
 		ID,
-		STRING
+		STRING,
+		MULTIPLY,
+		ADD,
+		COMMENT,
+		UNDEFINED,
+		DUPE_EOF
 	} ;
 
-#endif

@@ -17,16 +17,17 @@
 using namespace std;
 
 class Token {
-public:
-	string Value;
-	unsigned Line;
-//	Kind tokenType;
+
+
 
 	map<int, string> kinds;
 
 
-//public:
+public:
+	string Value;
+	unsigned Line;
 	Kind tokenType;
+
 
 	Token(string V, unsigned L, Kind K){
 		Value = V;
@@ -46,14 +47,21 @@ public:
 		kinds[10] = "QUERIES";
 		kinds[11] = "ID";
 		kinds[12] = "STRING";
+		kinds[13] = "MULTIPLY";
+		kinds[14] = "ADD";
+		kinds[15] = "COMMENT";
+		kinds[16] = "UNDEFINED";
+		kinds[17] = "EOF";
 	}
 
 	virtual ~Token(){
 	}
 	
-	void print(ofstream & out){
-	out << "(" << kinds[tokenType] << ",\"" << Value << "\"," << Line
-	<< ")" << endl;
+	void print(ostream & out){
+		out << "(" << kinds[tokenType] 
+				<< ",\"" << Value 
+				<< "\"," << Line
+				<< ")" << endl;
 	}
 
 };

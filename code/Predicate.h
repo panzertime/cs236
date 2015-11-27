@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Parameter.h"
+#include "Expression.h"
 
 using namespace std;
 
@@ -31,10 +32,29 @@ vector<Parameter> params;
 		string s;
 		s += label;
 		s += "(";
-		for (auto t : params){
-			s += t.toString();
+		for (int i = 0; i < params.size(); i++) {
+			s += (&(params[i]))->toString();
 			s += ",";
 		}
+
+/**		for (auto t : params){
+			Parameter* paramPtr;
+			Expression* exprPtr;
+			if (t.expr == 1){
+				exprPtr = &t;
+				s += exprPtr->toString();
+			}
+			else {
+				paramPtr = &t;
+				s += paramPtr->toString();
+			}
+		//	s += "EXPRESSION ";
+		//	}
+		//	else {
+		//	s += t.toString();
+			s += ",";
+		//}    **/
+		
 		s.pop_back();
 		s += ")";
 	//	s += "\n";
