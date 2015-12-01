@@ -49,8 +49,7 @@ int main(int argc, const char** argv){
 	
 	ifstream in;
 	in.open(argv[1]);
-	ofstream out;
-	out.open(argv[2]);
+
 
 	Scanner s(in);
 	s.scan();
@@ -60,14 +59,14 @@ int main(int argc, const char** argv){
 		DatalogProgram DProg = p.parse();
 		DProg.createDomain();
 		Database DB = Database(DProg);
-		out << DB.toString();
-		out << "Rule Evaluation\n\n";
+//		cout << DB.toString();
+//		cout << "Rule Evaluation\n\n";
 		unsigned passes = 0;
 		int preDelta;
 		do{
 			preDelta = DB.size();
 			for(unsigned i = 0; i < DProg.Rules.size(); i++){
-				out << DProg.Rules[i].toString() << endl;
+//				cout << DProg.Rules[i].toString() << endl;
 				vector<Relation> tails;
 				for(unsigned k = 0; k < DProg.Rules[i].tail.size(); k++){
 					tails.push_back(DB.predPrep(DProg.Rules[i].tail[k]));
@@ -105,7 +104,7 @@ int main(int argc, const char** argv){
 				sum = sum.rename(vars);
 				// at this point "sum" should be the fully projected and stuff
 				// and ready to union with the stuff in the DB
-				out << sum.toString(DB.relations[DProg.Rules[i].head.label]);
+//				cout << sum.toString(DB.relations[DProg.Rules[i].head.label]);
 				DB.relations[DProg.Rules[i].head.label].unionWith(sum);
 				//and now print... but how?
 				//check each tuple?  probably all we can do.
@@ -114,28 +113,28 @@ int main(int argc, const char** argv){
 			passes++;
 		}while(!((DB.size() - preDelta) == 0));
 		
-		out << endl;
-		out << "Converged after " << passes << " passes through the Rules." << endl;
+//		cout << endl;
+		cout << "Schemes populated after " << passes << " passes through the Rules." << endl;
 		// funny note: i kept forgetting to add "passes" even though i noticed it several times
 		// because the variable is also called passes.  this isn't the first time
 		// i've had this problem.  tell john carmack idk
 		
-		out << endl;
-		out << DB.printRelations();
+//		cout << endl;
+//		cout << DB.printRelations();
 
 
 		
-		out << "Query Evaluation\n\n";
+//		cout << "Query Evaluation\n\n";
 		for (auto p : DProg.Queries){
-			out << p.toString() << "? ";
-			out << DB.queryEval(p);
+			cout << p.toString() << "? ";
+			cout << DB.queryEval(p);
 			
 		}
 	}
 	catch (Token e){
-		out << "Failure!" << endl;
-		out << "  " ;
-		e.print(out);
+		cout << "Failure!" << endl;
+		cout << "  " ;
+		e.print(cout);
 		
 	}
 /*	if (err)
@@ -144,7 +143,6 @@ int main(int argc, const char** argv){
 	if (!err)
 		out << "Total Tokens = " << v.size(); */
 	in.close();
-	out.close();
 }
 
 

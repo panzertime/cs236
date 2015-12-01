@@ -35,7 +35,7 @@ Scheme scheme;
 
 	set<Tuple> tuples;
 
-	void add(Tuple & t){
+	void add(const Tuple & t){
 		tuples.insert(t);
 	}
 
